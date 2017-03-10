@@ -78,8 +78,6 @@ ipak <- function(pkg, repository=c('CRAN', 'Bioconductor', 'github')){
 
 # CRAN PACKAGES
 cranpackages <- c("gamlss.dist", "methods", "stats", "moments", "doParallel", "parallel", "reshape2", "dplyr", "tidyr", "data.table", 'ggplot2', 'ggthemes', 'ggExtra', 'cowplot', 'scales', 'fitdistrplus', 'MASS', 'pscl', 'nonnest2', 'cobs', 'msir', 'drc', 'devtools', 'XML')
-# Note: To install msir, the dependency rgl needs to be installed (apt-get install libx11-dev mesa-common-dev libglu1-mesa-dev).
-# Note to install XML, xml2 config is needed (apt-get install libxml2-dev).
 ipak(cranpackages, repository='CRAN')
 
 # BIOCONDUCTOR
@@ -87,10 +85,8 @@ biocpackages <- c('S4Vectors', 'AnnotationDbi', 'Biobase', 'BiocParallel', 'scat
 ipak(biocpackages, repository='Bioconductor')
 
 # GITHUB
-# Note: to install scde cairo and x11 are needed (apt-get install libcairo2-dev, apt-get install libxt-dev).
 githubpackages <- c('gu-mi/NBGOF', 'hms-dbmi/scde', 'nghiavtr/BPSC')
 ipak(githubpackages, repository = 'github')
-devtools::install_github('kdkorthauer/scDD', build_vignettes = FALSE, ref = 'develop')
 @
 
 %---------------------------------------------------------
@@ -132,8 +128,12 @@ With the following command, we estimate and plot the parameters for the embryoni
 
 <<echo=TRUE,eval=FALSE>>=
 # download count table
-Kolodziejczyk.cnts <- getURL()
-TwoiLIF.params = estimateNBParam(countData = Kolodziejczyk.cnts,
+githubURL <- "https://github.com/bvieth/powsimRData/raw/master/data-raw/kolodziejczk_cnts.rda"
+download.file(url = githubURL, destfile= "kolodziejczk_cnts.rda", method = "wget")
+load('kolodziejczk_cnts.rda')
+kolodziejczk_cnts <- kolodziejczk_cnts[, grep('standard', colnames(kolodziejczk_cnts))]
+
+TwoiLIF.params = estimateNBParam(countData = kolodziejczk_cnts,
                                cData = NULL,
                                design = NULL,
                                RNAseq = 'singlecell',
@@ -152,10 +152,9 @@ plotNBParam(TwoiLif.params)
 We have implemented a read count simulation framework assuming an underlying negative binomial distribution.
 To predict the dispersion given a random draw of mean expression value observed, we apply a locally weighted polynomial regression fit. To capture the variability of dispersion estimates observed, a local variability prediction band (sigma=1.96) is applied.
 For bulk RNA-seq experiments, dropouts are less probable but can still occur. To include this phenomenon we sample from the observed dropout rates for genes that have a mean expression value below 5\% dropout probability determined by a decrease constrained B-splines regresssion of dropout rate against mean expression (\Rfunction{cobs} in \CRANpkg{cobs}).
-
 The resulting read count matrix has similar distributional characteristics as the original Kolodziejczyk data set (figure \ref{fig:simeval}).
 
-\begin{figure}
+\begin{figure}[h]
 \centering
 \includegraphics[width=0.8\linewidth]{simeval.jpeg}
 \caption{\textbf{Comparison of estimated and simulated read counts} (A) Dispersion versus Mean. (B) Dropout versus Mean.}
@@ -165,20 +164,25 @@ The resulting read count matrix has similar distributional characteristics as th
 %---------------------------------------------------------
 \section{Simulations}
 %---------------------------------------------------------
-
 For simulating differential expression between two groups, the number of genes, number of simulations, percentage of differential expression and effect size are set up with the function \Rfunction{DESetup}. The effect size is here defined as the log2 fold change which can be a constant, sampled from a vector or function. The uniform, normal and gamma distributions are possible options and illustrated in figure \ref{fig:lfcs}. Depending on the settings, these distribution can be broader or narrower. If using this option, we recommend to choose a distribution that closely resembles previously observed or expected fold changes.
 
-% \begin{figure}
-% \centering
-% \includegraphics[width=0.75\linewidth]{lfcdist.jpeg}
-% \caption{\textbf{Log2 fold change examples for gamma, uniform and normal distribution}
-% \label{fig:lfcs}
-% \end{figure}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\linewidth]{lfcdist.jpeg}
+\caption{Log2 fold change examples for gamma, uniform and normal distribution}
+\label{fig:lfcs}
+\end{figure}
 
 The distribution estimates and these settings are then combined to one object with \Rfunction{SimSetup}. This allows the user to assess power of multiple groupwise comparisons and different differential testing methods.
 The following command sets up simulations with 10,000 genes, 20\% genes being DE, log fold change sample from a narrow gamma distribution and parameter estimates based on Kolodziejczyk data:
 
 <<echo=TRUE,eval=FALSE>>=
+# download pre calculated estimated negative binomial parameters
+githubURL <- "https://github.com/bvieth/powsimRData/raw/master/data-raw/kolodziejczk_param.rda"
+download.file(url = githubURL, destfile= "kolodziejczk_param.rda", method = "wget")
+load('kolodziejczk_param.rda')
+TwoiLIF.params <- kolodziejczk_param
+
 lfc.gamma = function(x) sample(c(-1,1), size=x,replace=T)*rgamma(x, 3, 3)
 de.opts = DESetup(ngenes=10000, nsims=25, p.DE=0.2, LFC=lfc.gamma)
 sim.opts = SimSetup(desetup = de.opts, params = TwoiLIF.params, size.factors='given')
@@ -188,7 +192,7 @@ With the setup defined, the differential expression simulation is run with \Rfun
 
 \begin{description}
   \item[Replicates] The number of sample replicates per group (n1 and n2). These can be unbalanced.
-  \item[DEmethod] The differential testing method. The user can choose between  methods in total.  developed for bulk, xx developed for single cells. A detailed list can be found under point xx.
+  \item[DEmethod] The differential testing method. The user can choose between 12 methods in total.  8 developed for bulk, 4 developed for single cells.
   \item[ncores] A number of DE methods are able to run in parallel too speed up differential testing.
 \end{description}
 
@@ -196,11 +200,17 @@ With the setup defined, the differential expression simulation is run with \Rfun
 simDE = simulateDE(n1 = c(24,48,96,192,384,800),
                    n2 = c(24,48,96,192,384,800),
                    sim.settings = sim.opts,
-                   ncores = 1,
+                   ncores = 10,
                    DEmethod = 'MAST',
                    verbose = T)
-@
 
+# exemplatory simDE
+githubURL <- "https://github.com/bvieth/powsimRData/raw/master/data-raw/kolodziejczk_simDE.rda"
+download.file(url = githubURL, destfile= "kolodziejczk_simDE.rda", method = "wget")
+load('kolodziejczk_simDE.rda')
+simDE <- kolodziejczk_simDE
+
+@
 
 \subsection{Evaluation}
 
@@ -239,12 +249,12 @@ plotEvalRes(evalRes = evalDE,
             quick=TRUE, annot=TRUE)
 @
 
-%\begin{figure}[h]
-%\centering
-%\includegraphics[width=0.75\linewidth]{evalres.jpg}
-%\caption{\textbf{Power assessment for Kolodziejczyk simulation.}
-%\label{fig:power}
-%\end{figure}
+% \begin{figure}[h]
+% \centering
+% \includegraphics[width=0.75\linewidth]{}
+% \caption{Power assessment for Kolodziejczyk simulation.}
+% \label{fig:power}
+% \end{figure}
 
 %---------------------------------------------------------
 \section{Additional Functionalities}
@@ -252,7 +262,7 @@ plotEvalRes(evalRes = evalDE,
 
 \subsection{Evaluate Simulation Framework}
 
-It is important to validate the appropiateness of the chosen simulation framework. The function \Rfunction{evaluateDist} compares the theoretical fit of the poisson, negative binomial, zero-inflated poisson and zero-inflated negative binomial and Beta-Poisson distribution to the empirical RNA-seq read counts (\cite{Colin_Cameron2013-vb}, , \cite{Kim2013-qo}, \cite{Delmans2016-ef}).
+It is important to validate the appropiateness of the chosen simulation framework. The function \Rfunction{evaluateDist} compares the theoretical fit of the poisson, negative binomial, zero-inflated poisson and zero-inflated negative binomial and Beta-Poisson distribution to the empirical RNA-seq read counts (\cite{Colin_Cameron2013-vb}, \cite{Kim2013-qo}, \cite{Delmans2016-ef}).
 The evaluation is then summarized with the function \Rfunction{summariseDist} which chooses the best fitting distribution per gene based on goodness-of-fit statistics (Chi-square test), Akaike Information Criterium and comparing observed dropouts with zero count prediction of the models.
 % As noted by other developers, goodness-of-fit tests are not an objective tool and heavily depend on sample sizes (\cite{Delignette-Muller2015-ie}). A graphical evaluation of the fitted distribution is considered the most appropiate way but for high-throughput sequencing an unrealistic recommendation.
 Bulk RNA-seq experiments are usually conducted with a small number of samples. We therefore recommend to rely on the goodness-of-fit validation by \cite{Mi2015-ri}. To use this approach in \Rfunction{evaluateDist}, the user should allow for permutation simulations by setting the value of nsims to at least 100. If available, the computation can be run on multiple cores by setting the number of cores (ncores).
@@ -271,12 +281,12 @@ TwoiLIF.distfit = evaluateDist(cnts = Kolodziejczyk.cnts,
 plotEvalDist(evalDist = TwoiLIF.distfit, annot=F)
 @
 
-% \begin{figure}
-% \centering
-% \includegraphics[width=0.75\linewidth]{evaldist.pdf}
-% \caption{\textbf{A) Goodness-of-fit of the model per gene assessed with a chi-square test based on residual deviance and degrees of freedom. B) Akaike Information Criterion per gene: Model with the lowest AIC (red). Model with the lowest AIC and passed goodness-of-fit statistic test (teal). C) Observed versus predicted dropouts per model and gene. D) Model assessment per gene based on likelihood ratio test for nested models and Vuong test for non-nested models.}
-% \label{fig:evaldist}
-% \end{figure}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.75\linewidth]{evaldist.pdf}
+\caption{A) Goodness-of-fit of the model per gene assessed with a chi-square test based on residual deviance and degrees of freedom. B) Akaike Information Criterion per gene: Model with the lowest AIC (red). Model with the lowest AIC and passed goodness-of-fit statistic test (teal). C) Observed versus predicted dropouts per model and gene. D) Model assessment per gene based on likelihood ratio test for nested models and Vuong test for non-nested models.}
+\label{fig:evaldist}
+\end{figure}
 
 \subsection{Negative Binomial Parameters}
 
@@ -306,6 +316,12 @@ By default, there is no difference in library sizes between the samples. If the 
 %---------------------------------------------------------
 \section{Wrapper Function}
 %---------------------------------------------------------
+
+\Rfunction{PowSim} is a wrapper including estimation, simulation and evaluation. Please consult the detailed description of \Rfunction{PowSim} help page.
+<<echo=T, eval=F>>=
+res <- PowSim(input=NULL, RNAseq='singlecell', ngenes=10000, nsims=25, p.DE=0.1, LFC=function(x) sample(c(-1,1), size=x,replace=T)*rgamma(x, 3, 3), size.factors='equal', ncores=10, DEmethod="MAST", save.plots=TRUE, verbose=TRUE)
+@
+
 
 %---------------------------------------------------------
 \section{Session info}

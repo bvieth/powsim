@@ -55,6 +55,9 @@
 #' @seealso \code{\link{estimateNBParam}}, \code{\link{insilicoNBParam}}, \code{\link{DESetup}}, \code{\link{SimSetup}}, \code{\link{simulateDE}}, \code{\link{evaluateSim}}
 #' @examples
 #' \dontrun{
+#' ## simulating in silico single cell RNAseq data
+#' ## DE testing with  MAST
+#' ## NOTE: If parallel computing is not possible, consider using DEmethod="ROTS"!
 #' powsim <- PowSim(input=NULL,
 #' RNAseq='singlecell',
 #' ngenes=10000,

@@ -54,6 +54,9 @@ This function is a wrapper function including estimation, simulation and evaluat
 }
 \examples{
 \dontrun{
+## simulating in silico single cell RNAseq data
+## DE testing with  MAST
+## NOTE: If parallel computing is not possible, consider using DEmethod="ROTS"!
 powsim <- PowSim(input=NULL,
 RNAseq='singlecell',
 ngenes=10000,

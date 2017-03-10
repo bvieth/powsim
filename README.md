@@ -26,7 +26,7 @@ ipak <- function(pkg, repository = c("CRAN", "Bioconductor", "github")) {
 cranpackages <- c("gamlss.dist", "methods", "stats", "moments", "doParallel", 
     "parallel", "reshape2", "dplyr", "tidyr", "data.table", "ggplot2", "ggthemes", 
     "ggExtra", "cowplot", "scales", "fitdistrplus", "MASS", "pscl", "nonnest2", 
-    "cobs", "msir", "drc", "devtools", "XML", "devtools")
+    "cobs", "msir", "drc", "devtools", "XML")
 ipak(cranpackages, repository = "CRAN")
 
 # BIOCONDUCTOR
@@ -45,7 +45,10 @@ ipak(githubpackages, repository = "github")
 After installing the dependencies, powsim can be installed by using devtools as well.
 
 ``` r
+# if bioconductor BiocStyle is available
 devtools::install_github('bvieth/powsim', build_vignettes = TRUE)
+# otherwise
+devtools::install_github('bvieth/powsim', build_vignettes = FALSE)
 ```
 
 For examples and tips on using the package, please see the vignette PDF [here](https://github.com/bvieth/powsim/tree/master/vignettes/powsim.pdf).
