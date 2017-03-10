@@ -21,7 +21,7 @@ BiocStyle::latex()
 
 \maketitle
 
-\packageVersion{\Sexpr{BiocStyle::pkg_ver("powsim")}}
+%\packageVersion{\Sexpr{BiocStyle::pkg_ver("powsim")}}
 
 Report issues on \url{https://github.com/bvieth/powsim/issues}
 
@@ -30,12 +30,6 @@ Report issues on \url{https://github.com/bvieth/powsim/issues}
 \tableofcontents
 
 <<setup, include=FALSE, cache=FALSE>>=
-library(ggplot2)
-library(cowplot)
-library(tidyr)
-library(dplyr)
-library(knitr)
-library(xtable)
 
 knitr::opts_chunk$set(xtable.comment = FALSE,
                       echo=F,
@@ -137,6 +131,8 @@ The estimates, sequencing depth and normalisation factors are plotted with \Rfun
 With the following command, we estimate and plot the parameters for the embryonic stem cells cultured in standard 2i+lif medium (Kolodziejczyk) (figure \ref{fig:NBparams}). As expected for single cell RNA-seq, the variability (i.e. dispersion) and dropout rates are high. Furthermore, the dispersion strongly depends on the mean and does not level off with higher mean values.
 
 <<echo=TRUE,eval=FALSE>>=
+# download count table
+Kolodziejczyk.cnts <- getURL()
 TwoiLIF.params = estimateNBParam(countData = Kolodziejczyk.cnts,
                                cData = NULL,
                                design = NULL,
@@ -185,10 +181,10 @@ The following command sets up simulations with 10,000 genes, 20\% genes being DE
 <<echo=TRUE,eval=FALSE>>=
 lfc.gamma = function(x) sample(c(-1,1), size=x,replace=T)*rgamma(x, 3, 3)
 de.opts = DESetup(ngenes=10000, nsims=25, p.DE=0.2, LFC=lfc.gamma)
-sim.opts = SimSetup(desetup = de.opts, params = 2iLIF.params, size.factors='given')
+sim.opts = SimSetup(desetup = de.opts, params = TwoiLIF.params, size.factors='given')
 @
 
-With the setup defined, the differential expression simulation is run with \function(simulateDE). For this, the user needs to set the following options:
+With the setup defined, the differential expression simulation is run with \Rfunction(simulateDE). For this, the user needs to set the following options:
 
 \begin{description}
   \item[Replicates] The number of sample replicates per group (n1 and n2). These can be unbalanced.
@@ -264,7 +260,7 @@ Bulk RNA-seq experiments are usually conducted with a small number of samples. W
 With the following command, we estimate and plot the parameters for the embryonic stem cells cultured in standard 2i lif medium (Kolodziejczyk).
 
 <<echo=TRUE,eval=FALSE>>=
-2iLIF.distfit = evaluateDist(cnts = Kolodziejczyk.cnts,
+TwoiLIF.distfit = evaluateDist(cnts = Kolodziejczyk.cnts,
                              RNAseq = 'singlecell',
                              ncores = 1,
                              nsims = 1,
@@ -272,22 +268,21 @@ With the following command, we estimate and plot the parameters for the embryoni
                              min.meancount = 1,
                              min.libsize =1000)
 
-plotEvalDist(EvalDist, annot=F)
+plotEvalDist(evalDist = TwoiLIF.distfit, annot=F)
 @
 
-%\begin{figure}[h]
-%\centering
-%\includegraphics[width=0.75\linewidth]{lfc_dists.jpg}
-%\caption{\textbf{Evaluation of distribution fitting for Kolodziejczyk RNA-seq experiment.}
-%\label{fig:evaldist}
-%\end{figure}
+% \begin{figure}
+% \centering
+% \includegraphics[width=0.75\linewidth]{evaldist.pdf}
+% \caption{\textbf{A) Goodness-of-fit of the model per gene assessed with a chi-square test based on residual deviance and degrees of freedom. B) Akaike Information Criterion per gene: Model with the lowest AIC (red). Model with the lowest AIC and passed goodness-of-fit statistic test (teal). C) Observed versus predicted dropouts per model and gene. D) Model assessment per gene based on likelihood ratio test for nested models and Vuong test for non-nested models.}
+% \label{fig:evaldist}
+% \end{figure}
 
 \subsection{Negative Binomial Parameters}
 
 \subsubsection{in silico Parameter Definition}
 
-We have also implemented the option to approximate the read count matrix simulation based on random distribution functions in \R{}. The user then has to define the mean, dispersion, dropout and library size in \Rfunction{insilicoNBParam}. In the absence of suitable pilot studies,
-For example, a typical single cell RNA-seq experiment could be approximated with:
+We have also implemented the option to approximate the read count matrix simulation based on random distribution functions in \R{}. The user then has to define the mean, dispersion, dropout and library size in \Rfunction{insilicoNBParam}. In the absence of suitable pilot studies, a typical single cell RNA-seq experiment could be approximated with:
 \begin{itemize}
   \item mean
   \item dispersion
@@ -309,7 +304,7 @@ The user can view these estimates with \Rfunction{plotNBParam} and use it as an 
 By default, there is no difference in library sizes between the samples. If the user wishes for a more realistic, i.e. more variable distribution of read counts across samples, the library sizes can be sampled from observed, vector or function.
 
 %---------------------------------------------------------
-\section{Conclusion}
+\section{Wrapper Function}
 %---------------------------------------------------------
 
 %---------------------------------------------------------

@@ -138,7 +138,7 @@ insilicoNBParam <- function(means, dispersion, dropout=NULL, sf=NULL, RNAseq=c("
 #' ncol=ncells)
 #' ## estimating negative binomial parameters
 #' estparam <- estimateNBParam(cnts, RNAseq = 'singlecell',
-#' estFramework = 'DESeq2', sigma=1.96)
+#' estFramework = 'MatchMoments', sigma=1.96)
 #' plotNBParam(estparam)
 #'
 #' ## simulating bulk RNA-seq experiment

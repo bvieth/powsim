@@ -39,7 +39,7 @@
 #' For single cells, the following is defined:
 #' \itemize{
 #' \item{Mean gene expression}{\code{function(x) 2^runif(x, 3, 6)}.}
-#' \item{Gene-wise dispersion}{\code{function(x) 3 + 100/true.means}.}
+#' \item{Gene-wise dispersion}{\code{function(x) 3 + 100/x} where x is the average expression level.}
 #' \item(Size factors){\code{function(x) 2^rnorm(n=x, mean=0, sd=0.25)}}
 #' }
 #' For bulk, the following is defined:
@@ -55,7 +55,7 @@
 #' @seealso \code{\link{estimateNBParam}}, \code{\link{insilicoNBParam}}, \code{\link{DESetup}}, \code{\link{SimSetup}}, \code{\link{simulateDE}}, \code{\link{evaluateSim}}
 #' @examples
 #' \dontrun{
-#' powsim.kolodziejczk <- PowSim(input='kolodziejczk',
+#' powsim <- PowSim(input=NULL,
 #' RNAseq='singlecell',
 #' ngenes=10000,
 #' nsims=25,
@@ -81,25 +81,25 @@ PowSim <- function(input=NULL, RNAseq=c('bulk', 'singlecell'), ngenes=10000, nsi
       disp <- function(x) rgamma(x, shape = 2, rate = 6)
       dropout <- function(x) runif(x, 0, 0.25)
       sf <- function(x) rnorm(n=x, mean=1, sd=0.1)
-      param <- insilicoNBParam(means = mu, dispersion = disp, dropout = dropout, sf = sf, RNAseq = 'bulk')
+      param <- suppressMessages(insilicoNBParam(means = mu, dispersion = disp, dropout = dropout, sf = sf, RNAseq = 'bulk'))
     }
     if(RNAseq=='singlecell') {
       if(verbose){message("Assuming a single cell RNA-seq experiment.")}
       mu <- function(x) 2^runif(x, 3, 6)
       disp <- function(x) 3 + 100/x
       sf <- function(x) 2^rnorm(n=x, mean=0, sd=0.25)
-      param <- insilicoNBParam(means = mu, dispersion = disp, dropout = NULL, sf = sf, RNAseq = 'singlecell')
+      param <- suppressMessages(insilicoNBParam(means = mu, dispersion = disp, dropout = NULL, sf = sf, RNAseq = 'singlecell'))
     }
   }
   # estimate params
   if(is.matrix(input)) {
     if(verbose){message("Input count matrix provided. Estimating negative binomial parameters!")}
     if(RNAseq=='bulk') {
-      param <- estimateNBParam(countData = input, cData=NULL, design=NULL, RNAseq = 'bulk', estFramework = 'edgeR')
+      param <- suppressMessages(estimateNBParam(countData = input, cData=NULL, design=NULL, RNAseq = 'bulk', estFramework = 'edgeR'))
       param.plot <- plotNBParam(estParam.out = param, annot=T)
     }
     if(RNAseq=='singlecell') {
-      param <- estimateNBParam(countData = input, cData=NULL, design=NULL, RNAseq = 'singlecell', estFramework = 'MatchMoments')
+      param <- supressMessages(estimateNBParam(countData = input, cData=NULL, design=NULL, RNAseq = 'singlecell', estFramework = 'MatchMoments'))
       param.plot <- plotNBParam(estParam.out = param, annot=T)
     }
   }
@@ -154,6 +154,22 @@ PowSim <- function(input=NULL, RNAseq=c('bulk', 'singlecell'), ngenes=10000, nsi
     simres <- simulateDE(n1=n1, n2=n2, sim.settings = simsetup, ncores=ncores, DEmethod=DEmethod, verbose=F)
   }
 
+  # Insilico PARAMS
+  if (attr(simsetup, 'param.type') == 'insilico') {
+      max.n <- max(n1,n2)
+      tmp.simOpts <- simsetup
+      tmp.simOpts$DEid <- tmp.simOpts$DEid[[1]]
+      tmp.simOpts$DEid <- 0
+      tmp.simOpts$lfc <- tmp.simOpts$lfc[[1]]
+      tmp.simOpts$lfc <- rep(0, ngenes)
+      tmp.simOpts$sim.seed <- tmp.simOpts$sim.seed[[1]]
+      dat.sim <- .simRNAseq(simOptions = tmp.simOpts, n1 = max.n, n2 = max.n)
+      estparam <- estimateNBParam(countData = dat.sim$counts, cData = NULL, design=NULL, RNAseq=RNAseq, estFramework = 'MatchMoments', sigma = 1.96)
+      simres$sim.settings$means <- estparam$means
+      simres$sim.settings$dispersion <- estparam$dispersion
+      simres$sim.settings$p0 <- estparam$p0
+  }
+
   # EVALUATION
   evalres <- evaluateSim(simRes=simres, alpha.type="adjusted", MTC="BH", alpha.nominal=0.1,
               stratify.by="mean",
@@ -163,7 +179,6 @@ PowSim <- function(input=NULL, RNAseq=c('bulk', 'singlecell'), ngenes=10000, nsi
   # print marginal table
   if(verbose){message("Printing the marginal error rates in a table.")}
   evaltable <- printEvalRes(evalRes=evalres)
-  print(evaltable)
 
   # plot marginal and conditional error matrices
   marg.plot <- plotEvalRes(evalRes = evalres, rate='marginal', quick=T, annot=T)

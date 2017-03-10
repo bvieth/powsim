@@ -54,7 +54,7 @@ This function is a wrapper function including estimation, simulation and evaluat
 }
 \examples{
 \dontrun{
-powsim.kolodziejczk <- PowSim(input='kolodziejczk',
+powsim <- PowSim(input=NULL,
 RNAseq='singlecell',
 ngenes=10000,
 nsims=25,
