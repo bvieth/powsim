@@ -35,8 +35,7 @@
 #' \item{EvaluationResults}{The results of error matrices evaluation. For details, see the result values of \code{\link{evaluateSim}}.}
 #' \item{SummaryTable}{The marginal TPR and FDR per sample sizes. For details, see \code{\link{printEvalRes}}.}
 #' \item{MarginalPlot, ConditionalPLot}{The marginal and conditional TPR and FDR plots. See \code{\link{plotEvalRes}}.}
-#' @details This function is a wrapper with a number of default settings.\\
-#' The insilico parameter definition depends on the RNAseq experiment.\\
+#' @details This function is a wrapper with a number of default settings. The insilico parameter definition depends on the RNAseq experiment.
 #' For single cells, the following is defined:
 #' \itemize{
 #' \item{Mean gene expression}{\code{function(x) 2^runif(x, 3, 6)}.}

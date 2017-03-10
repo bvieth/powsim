@@ -54,6 +54,16 @@ Gene stratification: We recommend to compute and visualize error rates (especial
 Gene filtering: sometimes it is advisible to filter out some genes (such as the ones with very low mean expression) before DE detection. The filtering option here provides an opportunity to compare the powers before and after filtering.\
 Define biologically interesting genes: We provide two options to define biologically interesting genes: by absolute values of log fold changes or effect sizes (absolute values of log fold changes divided by the square root of 1/(mean+dispersions)). Genes with these quantities over a threshold are deemed interesting, and the power calculation are based on these genes.
 }
+\examples{
+\dontrun{
+evalres <- evaluateSim(simRes=simres,
+alpha.type="adjusted",
+MTC="BH", alpha.nominal=0.1,
+stratify.by="mean",
+filter.by="none", target.by="lfc",
+delta=0)
+}
+}
 \seealso{
 \code{\link{estimateNBParam}} for negative binomial parameters, \code{\link{SimSetup}} and \code{\link{DESetup}} for setting up simulation parameters and \code{\link{simulateDE}} for simulating differential expression.
 }

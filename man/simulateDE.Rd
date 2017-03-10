@@ -18,7 +18,7 @@ verbose=TRUE)
 
 \item{ncores}{integer positive number of cores for parallel processing, default is NULL, ie 1 core.}
 
-\item{DEmethod}{String to specify the DE detection method to be used. Available options are: edgeRglm, edgeRQL, DESeq2, limma, ROTS, baySeq, NOISeq, DSS, TSPM, MAST, scde, BPSC, monocle, scDD.}
+\item{DEmethod}{String to specify the DE detection method to be used. Available options are: edgeRglm, edgeRQL, DESeq2, limma, ROTS, baySeq, NOISeq, DSS, TSPM, MAST, scde, BPSC.}
 
 \item{verbose}{Logical value to indicate whether to show progress report of simulations. Default is TRUE.}
 }

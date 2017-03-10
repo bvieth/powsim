@@ -40,12 +40,11 @@ write.dcf(list(Package = "powsim",
                           DSS,
                           MAST,
                           scde,
-                          scDD,
                           ROTS,
                           BPSC,
                           IHW,
                           qvalue",
-               Remotes = "kdkorthauer/scDD, gu-mi/NBGOF, hms-dbmi/scde, nghiavtr/BPSC",
+               Remotes = "gu-mi/NBGOF, hms-dbmi/scde, nghiavtr/BPSC",
                Depends = "R (>= 3.3),
                           gamlss.dist",
                Suggests = "BiocStyle,
@@ -59,3 +58,7 @@ write.dcf(list(Package = "powsim",
 
 # old Imports
 # monocle, VGAM, NBPSeq,
+# old Remotes
+# kdkorthauer/scDD
+# https://api.github.com/repos/kdkorthauer/scDD/zipball/develop
+#                VignetteBuilder = 'knitr',

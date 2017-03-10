@@ -41,9 +41,14 @@
 #' @seealso \code{\link{estimateNBParam}} for negative binomial parameters, \code{\link{SimSetup}} and \code{\link{DESetup}} for setting up simulation parameters and \code{\link{simulateDE}} for simulating differential expression.
 #' @examples
 #' \dontrun{
-#' evalres <- evaluateSim(simRes=simres, alpha.type="adjusted", MTC="BH", alpha.nominal=0.1, stratify.by="mean", filter.by="none", target.by="lfc", delta=0)
-#' @rdname evaluateSim
+#' evalres <- evaluateSim(simRes=simres,
+#' alpha.type="adjusted",
+#' MTC="BH", alpha.nominal=0.1,
+#' stratify.by="mean",
+#' filter.by="none", target.by="lfc",
+#' delta=0)
 #' }
+#' @rdname evaluateSim
 #' @importFrom stats ecdf quantile p.adjust.methods p.adjust
 #' @importFrom qvalue qvalue
 #' @importFrom IHW ihw adj_pvalues

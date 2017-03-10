@@ -46,7 +46,7 @@ ipak(githubpackages, repository = "github")
 # = 'develop')
 ```
 
-For examples and tips on using the package, please see the vignette PDF [here](https://github.com/bvieth/powsim/vignettes/powsim.pdf) which you can alternatively bring up by typing
+For examples and tips on using the package, please see the vignette PDF [here](https://github.com/bvieth/powsim/tree/master/vignettes/powsim.pdf) which you can alternatively bring up by typing
 
 ``` r
 browseVignettes("powsim")

@@ -52,7 +52,7 @@ ipak(githubpackages, repository = 'github')
 
 
 For examples and tips on using the package, please see the vignette PDF 
-[here](https://github.com/bvieth/powsim/vignettes/powsim.pdf)
+[here](https://github.com/bvieth/powsim/tree/master/vignettes/powsim.pdf)
 which you can alternatively bring up by typing 
 
 ```R

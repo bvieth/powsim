@@ -26,7 +26,6 @@
 #' \item{p0}{Probability that the count will be zero per gene.}
 #' \item{sf}{Size factor per sample.}
 #' \item{estFramework}{"in silico" by default.}
-#' @details
 #' @examples
 #' \dontrun{
 #' ## Bulk RNA-seq experiment in silico parameters:
