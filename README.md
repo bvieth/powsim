@@ -26,7 +26,7 @@ ipak <- function(pkg, repository = c("CRAN", "Bioconductor", "github")) {
 cranpackages <- c("gamlss.dist", "methods", "stats", "moments", "doParallel", 
     "parallel", "reshape2", "dplyr", "tidyr", "data.table", "ggplot2", "ggthemes", 
     "ggExtra", "cowplot", "scales", "fitdistrplus", "MASS", "pscl", "nonnest2", 
-    "cobs", "msir", "drc", "devtools", "XML")
+    "cobs", "msir", "drc", "devtools", "XML", "devtools")
 # Note: To install msir, the dependency rgl is needed (apt-get install
 # libx11-dev mesa-common-dev libglu1-mesa-dev).  Note to install XML, xml2
 # config is needed (apt-get install libxml2-dev).
@@ -44,6 +44,12 @@ githubpackages <- c("gu-mi/NBGOF", "hms-dbmi/scde", "nghiavtr/BPSC")
 ipak(githubpackages, repository = "github")
 # devtools::install_github('kdkorthauer/scDD', build_vignettes = FALSE, ref
 # = 'develop')
+```
+
+After installing the dependencies, powsim can be installed by using devtools as well.
+
+``` r
+devtools::install_github('bvieth/powsim', build_vignettes = FALSE)
 ```
 
 For examples and tips on using the package, please see the vignette PDF [here](https://github.com/bvieth/powsim/tree/master/vignettes/powsim.pdf) which you can alternatively bring up by typing
