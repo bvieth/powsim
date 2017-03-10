@@ -204,12 +204,6 @@ simDE = simulateDE(n1 = c(24,48,96,192,384,800),
                    DEmethod = 'MAST',
                    verbose = T)
 
-# exemplatory simDE
-githubURL <- "https://github.com/bvieth/powsimRData/raw/master/data-raw/kolodziejczk_simDE.rda"
-download.file(url = githubURL, destfile= "kolodziejczk_simDE.rda", method = "wget")
-load('kolodziejczk_simDE.rda')
-simDE <- kolodziejczk_simDE
-
 @
 
 \subsection{Evaluation}
@@ -222,7 +216,7 @@ With the following command we evaluate the marginal TPR and TPR conditional on t
 <<echo=TRUE,eval=FALSE>>=
 evalDE = evaluateSim(simRes = simDE,
                      alpha.type = 'adjusted',
-                     MTC = 'FDR',
+                     MTC = 'BH',
                      alpha.nominal = 0.1,
                      stratify.by = 'mean',
                      filter.by = 'none',
@@ -249,13 +243,6 @@ plotEvalRes(evalRes = evalDE,
             quick=TRUE, annot=TRUE)
 @
 
-% \begin{figure}[h]
-% \centering
-% \includegraphics[width=0.75\linewidth]{}
-% \caption{Power assessment for Kolodziejczyk simulation.}
-% \label{fig:power}
-% \end{figure}
-
 %---------------------------------------------------------
 \section{Additional Functionalities}
 %---------------------------------------------------------
@@ -270,7 +257,7 @@ Bulk RNA-seq experiments are usually conducted with a small number of samples. W
 With the following command, we estimate and plot the parameters for the embryonic stem cells cultured in standard 2i lif medium (Kolodziejczyk).
 
 <<echo=TRUE,eval=FALSE>>=
-TwoiLIF.distfit = evaluateDist(cnts = Kolodziejczyk.cnts,
+TwoiLIF.distfit = evaluateDist(cnts = kolodziejczk_cnts,
                              RNAseq = 'singlecell',
                              ncores = 1,
                              nsims = 1,
@@ -294,9 +281,9 @@ plotEvalDist(evalDist = TwoiLIF.distfit, annot=F)
 
 We have also implemented the option to approximate the read count matrix simulation based on random distribution functions in \R{}. The user then has to define the mean, dispersion, dropout and library size in \Rfunction{insilicoNBParam}. In the absence of suitable pilot studies, a typical single cell RNA-seq experiment could be approximated with:
 \begin{itemize}
-  \item mean
-  \item dispersion
-  \item library size
+  \item mean: \Rcode{function(x) rgamma(x, 4, 2)} where x is the number of genes
+  \item dispersion: \Rcode{function(x) 2 + 100/x} where x is the mean
+  \item library size: \Rcode{function(x) 2**rnorm(n=x, mean=0, sd=0.25)} where x is the number of samples
 \end{itemize}
 
 The same functionality can also be used for bulk RNA-seq.

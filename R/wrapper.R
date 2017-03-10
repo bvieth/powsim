@@ -38,13 +38,13 @@
 #' @details This function is a wrapper with a number of default settings. The insilico parameter definition depends on the RNAseq experiment.
 #' For single cells, the following is defined:
 #' \itemize{
-#' \item{Mean gene expression}{\code{function(x) 2^runif(x, 3, 6)}.}
-#' \item{Gene-wise dispersion}{\code{function(x) 3 + 100/x} where x is the average expression level.}
+#' \item{Mean gene expression}{\code{function(x) rgamma(x, 4, 2)}.}
+#' \item{Gene-wise dispersion}{\code{function(x) 2 + 100/x} where x is the average expression level.}
 #' \item(Size factors){\code{function(x) 2^rnorm(n=x, mean=0, sd=0.25)}}
 #' }
 #' For bulk, the following is defined:
 #' \itemize{
-#' \item{Mean gene expression}{\code{function(x) 2^runif(x, 3, 6).}
+#' \item{Mean gene expression}{\code{function(x) 2^rnorm(x, mean=8, sd=2).}
 #' \item{Gene-wise dispersion}{\code{function(x) rgamma(x, shape = 2, rate = 6).}
 #' \item{Gene-wise dropout rate}{\code{function(x) runif(x, min=0, max=0.25)}}
 #' \item(Size factors){\code{function(x) rnorm(n=x, mean=1, sd=0.1)}}
@@ -88,8 +88,8 @@ PowSim <- function(input=NULL, RNAseq=c('bulk', 'singlecell'), ngenes=10000, nsi
     }
     if(RNAseq=='singlecell') {
       if(verbose){message("Assuming a single cell RNA-seq experiment.")}
-      mu <- function(x) 2^runif(x, 3, 6)
-      disp <- function(x) 3 + 100/x
+      mu <- function(x) rgamma(x, 4, 2)
+      disp <- function(x) 2 + 100/x
       sf <- function(x) 2^rnorm(n=x, mean=0, sd=0.25)
       param <- suppressMessages(insilicoNBParam(means = mu, dispersion = disp, dropout = NULL, sf = sf, RNAseq = 'singlecell'))
     }

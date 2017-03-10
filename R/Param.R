@@ -35,7 +35,7 @@
 #' sf=function(x) rnorm(n=x, mean=1, sd=0.1), RNAseq='bulk')
 #' ## Single cell RNA-seq experiment in silico parameters:
 #' insilico.singlecell <- insilicoNBParam(means=function(x) rgamma(x, 4, 2),
-#' dispersion=function(x) 3 + 150/x,
+#' dispersion=function(x) 2 + 150/x,
 #' dropout=NULL,
 #' sf=function(x) 2^rnorm(n=x, mean=0, sd=0.5),
 #' RNAseq='singlecell')

@@ -132,9 +132,9 @@ plotEvalRes <- function(evalRes, rate=c('marginal', 'stratified'), quick=TRUE, a
       dat.marginal.calc <- dat.marginal.long %>% dplyr::group_by(Var1, L1) %>% dplyr::summarise(Expectation=mean(value), Deviation=sd(value), Error=sd(value)/sqrt(n())) %>% dplyr::ungroup()
       limits <- ggplot2::aes(ymax = Expectation + Deviation, ymin= Expectation - Deviation)
       # marginal in one
-      grandplot <- ggplot2::ggplot(data = dat.marginal.long, aes(x=Var1, y=value, fill=L1, color=L1)) + ggplot2::geom_boxplot() + ggthemes::theme_base() + ggplot2::xlab(NULL) + ggplot2::ylab('Rate') + ggplot2::scale_y_continuous(labels = scales::percent, limits = c(0,1)) + ggplot2::theme(legend.position='top', legend.title = element_blank(), axis.text.x=element_text(size=10, angle=45, hjust=1), axis.text.y=element_text(size=10), axis.title=element_text(size=10, face="bold"), legend.text = element_text(size=10), legend.key.size = unit(1, "cm"))
+      grandplot <- ggplot2::ggplot(data = dat.marginal.long, aes(x=Var1, y=value, fill=L1)) + ggplot2::geom_boxplot() + ggthemes::theme_base() + ggplot2::xlab(NULL) + ggplot2::ylab('Rate') + ggplot2::scale_y_continuous(labels = scales::percent, limits = c(0,1)) + ggplot2::theme(legend.position='top', legend.title = element_blank(), axis.text.x=element_text(size=10, angle=45, hjust=1), axis.text.y=element_text(size=10), axis.title=element_text(size=10, face="bold"), legend.text = element_text(size=10), legend.key.size = unit(1, "cm"))
       # faceted marginal
-      facetplot <-  ggplot2::ggplot(data = dat.marginal.calc, aes(x=Var1, y=Expectation, fill=L1, color=L1)) + ggplot2::geom_line(aes(group=L1)) + ggplot2::geom_pointrange(limits) + ggthemes::theme_base() + ggplot2::xlab('Samples') + ggplot2::ylab('Rate') + ggplot2::scale_y_continuous(labels = scales::percent, limits = c(0,1)) + ggplot2::theme(legend.position='none', legend.title = element_blank(), axis.text.x=element_text(size=10, angle=45, hjust=1), axis.text.y=element_text(size=10), axis.title=element_text(size=10, face="bold"), legend.text = element_text(size=10), legend.key.size = unit(1, "cm"), strip.text = element_text(size=10, face="bold")) + ggplot2::facet_wrap(~L1, scales = 'free_x', ncol=1) + ggplot2::geom_hline(data = refval, aes(yintercept = ref), linetype="dashed", color='grey')
+      facetplot <-  ggplot2::ggplot(data = dat.marginal.calc, aes(x=Var1, y=Expectation, fill=L1, color=L1)) + ggplot2::geom_line(aes(group=L1)) + ggplot2::geom_pointrange(limits) + ggthemes::theme_base() + ggplot2::xlab('Samples') + ggplot2::ylab('Rate') + ggplot2::scale_y_continuous(labels = scales::percent) + ggplot2::theme(legend.position='none', legend.title = element_blank(), axis.text.x=element_text(size=10, angle=45, hjust=1), axis.text.y=element_text(size=10), axis.title=element_text(size=10, face="bold"), legend.text = element_text(size=10), legend.key.size = unit(1, "cm"), strip.text = element_text(size=10, face="bold")) + ggplot2::facet_wrap(~L1, scales = 'free', ncol=1) + ggplot2::geom_hline(data = refval, aes(yintercept = ref), linetype="dashed", color='grey')
       # annotation under plot
       p.final <- suppressWarnings(cowplot::plot_grid(grandplot, facetplot, labels=c('A', 'B'), rel_heights = c(1,1.5), ncol=1, nrow=2))
       if(annot) {
@@ -151,13 +151,13 @@ plotEvalRes <- function(evalRes, rate=c('marginal', 'stratified'), quick=TRUE, a
       dat.marginal.calc <- dat.marginal.long %>% dplyr::group_by(Var1, L1) %>% dplyr::summarise(Expectation=mean(value), Deviation=sd(value), Error=sd(value)/sqrt(n())) %>% dplyr::ungroup()
       limits <- ggplot2::aes(ymax = Expectation + Deviation, ymin= Expectation - Deviation)
       # marginal in one
-      grandplot <- ggplot(data = dat.marginal.long, aes(x=Var1, y=value, fill=L1, color=L1)) + ggplot2::geom_boxplot() + ggthemes::theme_base() + ggplot2::xlab(NULL) + ggplot2::ylab('Rate') + ggplot2::scale_y_continuous(labels = scales::percent, limits = c(0,1)) + ggplot2::theme(legend.position='top', legend.title = element_blank(), axis.text.x=element_text(size=10, angle=45, hjust=1), axis.text.y=element_text(size=10), axis.title=element_text(size=10, face="bold"), legend.text = element_text(size=10), legend.key.size = unit(1, "cm"))
+      grandplot <- ggplot(data = dat.marginal.long, aes(x=Var1, y=value, fill=L1)) + ggplot2::geom_boxplot() + ggthemes::theme_base() + ggplot2::xlab(NULL) + ggplot2::ylab('Rate') + ggplot2::scale_y_continuous(labels = scales::percent, limits = c(0,1)) + ggplot2::theme(legend.position='top', legend.title = element_blank(), axis.text.x=element_text(size=10, angle=45, hjust=1), axis.text.y=element_text(size=10), axis.title=element_text(size=10, face="bold"), legend.text = element_text(size=10), legend.key.size = unit(1, "cm"))
       # faceted marginal
-      facetplot <-  ggplot2::ggplot(data = dat.marginal.calc, aes(x=Var1, y=Expectation, fill=L1, color=L1)) + ggplot2::geom_line(aes(group=L1)) + ggplot2::geom_pointrange(limits) + ggthemes::theme_base() + ggplot2::xlab('Samples') + ggplot2::ylab('Rate') + ggplot2::scale_y_continuous(labels = scales::percent, limits = c(0,1)) + ggplot2::theme(legend.position='none', legend.title = element_blank(), axis.text.x=element_text(size=10, angle=45, hjust=1), axis.text.y=element_text(size=10), axis.title=element_text(size=10, face="bold"), legend.text = element_text(size=10), legend.key.size = unit(1, "cm"), strip.text = element_text(size=10, face="bold")) + ggplot2::facet_wrap(~L1, scales = 'free_x', ncol=2) + ggplot2::geom_hline(data = refval, aes(yintercept = ref), linetype="dashed", color='grey')
+      facetplot <-  ggplot2::ggplot(data = dat.marginal.calc, aes(x=Var1, y=Expectation, fill=L1, color=L1)) + ggplot2::geom_line(aes(group=L1)) + ggplot2::geom_pointrange(limits) + ggthemes::theme_base() + ggplot2::xlab('Samples') + ggplot2::ylab('Rate') + ggplot2::scale_y_continuous(labels = scales::percent) + ggplot2::theme(legend.position='none', legend.title = element_blank(), axis.text.x=element_text(size=10, angle=45, hjust=1), axis.text.y=element_text(size=10), axis.title=element_text(size=10, face="bold"), legend.text = element_text(size=10), legend.key.size = unit(1, "cm"), strip.text = element_text(size=10, face="bold")) + ggplot2::facet_wrap(~L1, scales = 'free', ncol=2) + ggplot2::geom_hline(data = refval, aes(yintercept = ref), linetype="dashed", color='grey')
       # annotation under plot
       p.final <- suppressWarnings(cowplot::plot_grid(grandplot, facetplot, labels=c('A', 'B'), rel_heights = c(1,2), ncol=1, nrow=2))
       if(annot) {
-        p.final <- cowplot::add_sub(p.final, "A) Marginal TPR and FDR per sample size comparison. \nB) Marginal TPR and FDR per sample size comparison with dashed line indicating nominal alpha level (type I error) and nominal 1-beta level, i.e. 80% power (type II error).", size=8)
+        p.final <- cowplot::add_sub(p.final, "A) Marginal error rates per sample size comparison. \nB) Marginal error rates per sample size comparison with dashed line indicating nominal alpha level (type I error) and nominal 1-beta level, i.e. 80% power (type II error).", size=8)
       }
     }
   }
@@ -184,7 +184,7 @@ plotEvalRes <- function(evalRes, rate=c('marginal', 'stratified'), quick=TRUE, a
       # annotation under plot
       p.final <- suppressWarnings(cowplot::plot_grid(facetplot, strataplot, labels=c('A', 'B'), rel_heights = c(2,1), ncol=1, nrow=2))
       if(annot) {
-        p.final <- cowplot::add_sub(p.final, "A) Marginal TPR and FDR per sample size comparison. \nB) Marginal TPR and FDR per sample size comparison with dashed line indicating nominal alpha level (type I error) and nominal 1-beta level, i.e. 80% power (type II error).", size=8)
+        p.final <- cowplot::add_sub(p.final, "A) Conditional TPR and FDR per sample size comparison per stratum. \nB) Number of equally (EE) and differentially expressed (DE) genes per stratum.", size=8)
       }
     }
     if(!quick) {
@@ -207,7 +207,7 @@ plotEvalRes <- function(evalRes, rate=c('marginal', 'stratified'), quick=TRUE, a
       # annotation under plot
       p.final <- suppressWarnings(cowplot::plot_grid(facetplot, strataplot, labels=c('A', 'B'), rel_heights = c(3,1), ncol=1, nrow=2))
       if(annot) {
-        p.final <- cowplot::add_sub(p.final, "A) Marginal TPR and FDR per sample size comparison. \nB) Marginal TPR and FDR per sample size comparison with dashed line indicating nominal alpha level (type I error) and nominal 1-beta level, i.e. 80% power (type II error).", size=8)
+        p.final <- cowplot::add_sub(p.final, "A) Conditional error rates over stratum. \nB) Number of equally (EE) and differentially expressed (DE) genes per stratum.", size=8)
       }
     }
   }
