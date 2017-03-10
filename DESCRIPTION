@@ -10,8 +10,8 @@ Imports: methods, stats, moments, S4Vectors, AnnotationDbi, Biobase,
         data.table, ggplot2, ggthemes, ggExtra, cowplot, scales,
         fitdistrplus, NBGOF, MASS, pscl, nonnest2, cobs, msir, drc,
         scran, scater, edgeR, limma, DESeq2, baySeq, NOISeq, EBSeq,
-        DSS, MAST, scde, scDD, ROTS, BPSC, IHW, qvalue
-Remotes: kdkorthauer/scDD, gu-mi/NBGOF, hms-dbmi/scde, nghiavtr/BPSC
+        DSS, MAST, scde, ROTS, BPSC, IHW, qvalue
+Remotes: gu-mi/NBGOF, hms-dbmi/scde, nghiavtr/BPSC
 Depends: R (>= 3.3), gamlss.dist
 Suggests: BiocStyle, knitr
 License: GPL
@@ -19,3 +19,4 @@ NeedsCompilation: no
 Author: Beate Vieth
 Date: 2017-03-10
 Maintainer: Beate Vieth <vieth@bio.lmu.de>
+RoxygenNote: 6.0.1
