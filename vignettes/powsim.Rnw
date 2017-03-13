@@ -87,6 +87,7 @@ ipak(biocpackages, repository='Bioconductor')
 # GITHUB
 githubpackages <- c('gu-mi/NBGOF', 'hms-dbmi/scde', 'nghiavtr/BPSC')
 ipak(githubpackages, repository = 'github')
+devtools::install_github('kdkorthauer/scDD', build_vignettes = FALSE, ref = 'develop')
 @
 
 %---------------------------------------------------------
@@ -99,16 +100,16 @@ In this vignette, we illustrate the features of \Rpackage{powsim} by assessing t
 \section{\Rpackage{powsim} workflow}
 %---------------------------------------------------------
 
-The basic workflow of \Rpackage{powsim} is illustrated in figure \ref{fig:powsim_scheme}.
+The basic workflow of \Rpackage{powsim} is illustrated in figure \ref{fig:powsim_scheme}: A) The mean-dispersion relationship is estimated from RNA-seq data, which can be either single cell or bulk data. The users can provide their own count tables or one of our five example data sets. B) These distribution parameters are then used to set-up the simulations. For better comparability, the parameters for the simulation of differential expression are set separately. C) Finally, the TPR and FDR are calculated. Both can be either returned as marginal estimates per sample configuration (shown), or stratified according to the estimates of mean expression, dispersion or dropout-rate .
 
-\begin{figure}
+\begin{figure}[h]
 \centering
 \includegraphics[width=0.9\linewidth]{powsim_schematic.jpeg}
 \caption{\textbf{Powsim schematic overview.} (A) Estimation: (B) Simulation: (C) Evaluation. Functions given in orange.}
 \label{fig:powsim_scheme}
 \end{figure}
 
-\subsection{Parameter estimation}
+\section{Parameter estimation}
 
 The parameters of the negative binomial distribution, i.e. mean and dispersion are estimated by the function \Rfunction{estimateNBParam}. In addition, the dropout probability, i.e. the fraction of zero counts per gene, is calculated.
 The user can choose between three estimation frameworks:
@@ -142,13 +143,6 @@ TwoiLIF.params = estimateNBParam(countData = kolodziejczk_cnts,
 plotNBParam(TwoiLif.params)
 @
 
-\begin{figure}
-\centering
-\includegraphics[width=0.98\linewidth]{NBparams.jpeg}
-\caption{\textbf{Estimated parameters for Kolodziejczyk data set.} A) Sequencing depth per sample with median sequencing depth (grey dashed line). B) Library size normalisation factor per sample with median size factor (grey dashed line). C) Local polynomial regression fit between mean and dispersion estimates with variability band per gene (yellow). Common dispersion estimate (grey dashed line). D) Fraction of dropouts versus estimated mean expression per gene.}
-\label{fig:NBparams}
-\end{figure}
-
 We have implemented a read count simulation framework assuming an underlying negative binomial distribution.
 To predict the dispersion given a random draw of mean expression value observed, we apply a locally weighted polynomial regression fit. To capture the variability of dispersion estimates observed, a local variability prediction band (sigma=1.96) is applied.
 For bulk RNA-seq experiments, dropouts are less probable but can still occur. To include this phenomenon we sample from the observed dropout rates for genes that have a mean expression value below 5\% dropout probability determined by a decrease constrained B-splines regresssion of dropout rate against mean expression (\Rfunction{cobs} in \CRANpkg{cobs}).
@@ -156,7 +150,14 @@ The resulting read count matrix has similar distributional characteristics as th
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.8\linewidth]{simeval.jpeg}
+\includegraphics[width=0.75\linewidth]{NBparams.jpeg}
+\caption{\textbf{Estimated parameters for Kolodziejczyk data set.} A) Sequencing depth per sample with median sequencing depth (grey dashed line). B) Library size normalisation factor per sample with median size factor (grey dashed line). C) Local polynomial regression fit between mean and dispersion estimates with variability band per gene (yellow). Common dispersion estimate (grey dashed line). D) Fraction of dropouts versus estimated mean expression per gene.}
+\label{fig:NBparams}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.7\linewidth]{simeval.jpeg}
 \caption{\textbf{Comparison of estimated and simulated read counts} (A) Dispersion versus Mean. (B) Dropout versus Mean.}
 \label{fig:simeval}
 \end{figure}
@@ -166,29 +167,17 @@ The resulting read count matrix has similar distributional characteristics as th
 %---------------------------------------------------------
 For simulating differential expression between two groups, the number of genes, number of simulations, percentage of differential expression and effect size are set up with the function \Rfunction{DESetup}. The effect size is here defined as the log2 fold change which can be a constant, sampled from a vector or function. The uniform, normal and gamma distributions are possible options and illustrated in figure \ref{fig:lfcs}. Depending on the settings, these distribution can be broader or narrower. If using this option, we recommend to choose a distribution that closely resembles previously observed or expected fold changes.
 
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.8\linewidth]{lfcdist.jpeg}
-\caption{Log2 fold change examples for gamma, uniform and normal distribution}
-\label{fig:lfcs}
-\end{figure}
-
 The distribution estimates and these settings are then combined to one object with \Rfunction{SimSetup}. This allows the user to assess power of multiple groupwise comparisons and different differential testing methods.
 The following command sets up simulations with 10,000 genes, 20\% genes being DE, log fold change sample from a narrow gamma distribution and parameter estimates based on Kolodziejczyk data:
 
 <<echo=TRUE,eval=FALSE>>=
-# download pre calculated estimated negative binomial parameters
-githubURL <- "https://github.com/bvieth/powsimRData/raw/master/data-raw/kolodziejczk_param.rda"
-download.file(url = githubURL, destfile= "kolodziejczk_param.rda", method = "wget")
-load('kolodziejczk_param.rda')
-TwoiLIF.params <- kolodziejczk_param
 
 lfc.gamma = function(x) sample(c(-1,1), size=x,replace=T)*rgamma(x, 3, 3)
 de.opts = DESetup(ngenes=10000, nsims=25, p.DE=0.2, LFC=lfc.gamma)
 sim.opts = SimSetup(desetup = de.opts, params = TwoiLIF.params, size.factors='given')
 @
 
-With the setup defined, the differential expression simulation is run with \Rfunction(simulateDE). For this, the user needs to set the following options:
+With the setup defined, the differential expression simulation is run with \Rfunction{simulateDE}. For this, the user needs to set the following options:
 
 \begin{description}
   \item[Replicates] The number of sample replicates per group (n1 and n2). These can be unbalanced.
@@ -206,7 +195,14 @@ simDE = simulateDE(n1 = c(24,48,96,192,384,800),
 
 @
 
-\subsection{Evaluation}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.6\linewidth]{lfcdist.jpeg}
+\caption{Log2 fold change examples for gamma, uniform and normal distribution}
+\label{fig:lfcs}
+\end{figure}
+
+\section{Evaluation}
 
 The results of differential expression simulation are evaluated with \Rfunction{evaluateSim}. We have separated the evaluation from DE detection to allow the user to evaluate power in a comprehensive way as advocated by \cite{Wu2015-uj}.
 In this function, the proporations and error rates are estimated. The rates can be stratified by mean, dispersion or dropout. Furthermore, the user can choose between different multiple testing correction methods (see \Rfunction{p.adjust.methods}, \Rfunction{ihw} in \Biocpkg{IHW} and \Rfunction{qvalue} in \Biocpkg{qvalue}). Also, the genes can be filtered by mean, dispersion or dropout. To define biologically interesting genes, a cutoff for the log2 fold change with delta can be set.
@@ -290,9 +286,8 @@ The same functionality can also be used for bulk RNA-seq.
 
 \subsubsection{Precalculated Parameter Estimates}
 
-We have included precalculated parameter estimates for bulk as well as single cell RNA-seq experiments.
-The data sets included represent different levels of mean, dispersion and dropout characteristics.
-The user can view these estimates with \Rfunction{plotNBParam} and use it as an input for \Rfunction{SimSetup}.
+We have uploaded read count matrices of 5 single cell RNA-seq experiments on \url{github}{https://github.com/bvieth/powsimRData} .
+The user can calculate the negative binomial parameters with \Rfunction{estimateNBParam}, view these estimates with \Rfunction{plotNBParam} and use it as an input for \Rfunction{SimSetup}.
 
 %\subsubsection{Access to raw read counts stored in recount data base}
 
@@ -304,7 +299,7 @@ By default, there is no difference in library sizes between the samples. If the 
 \section{Wrapper Function}
 %---------------------------------------------------------
 
-\Rfunction{PowSim} is a wrapper including estimation, simulation and evaluation. Please consult the detailed description of \Rfunction{PowSim} help page.
+\Rfunction{PowSim} is a wrapper including estimation, simulation and evaluation. Please consult the detailed description of \Rfunction{PowSim} help page for more information.
 <<echo=T, eval=F>>=
 res <- PowSim(input=NULL, RNAseq='singlecell', ngenes=10000, nsims=25, p.DE=0.1, LFC=function(x) sample(c(-1,1), size=x,replace=T)*rgamma(x, 3, 3), size.factors='equal', ncores=10, DEmethod="MAST", save.plots=TRUE, verbose=TRUE)
 @

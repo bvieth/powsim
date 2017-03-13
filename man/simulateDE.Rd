@@ -18,7 +18,7 @@ verbose=TRUE)
 
 \item{ncores}{integer positive number of cores for parallel processing, default is NULL, ie 1 core.}
 
-\item{DEmethod}{String to specify the DE detection method to be used. Available options are: edgeRglm, edgeRQL, DESeq2, limma, ROTS, baySeq, NOISeq, DSS, TSPM, MAST, scde, BPSC.}
+\item{DEmethod}{String to specify the DE detection method to be used. Available options are: edgeRglm, edgeRQL, DESeq2, limma, ROTS, baySeq, NOISeq, DSS, TSPM, MAST, scde, BPSC, scDD.}
 
 \item{verbose}{Logical value to indicate whether to show progress report of simulations. Default is TRUE.}
 }
@@ -38,21 +38,32 @@ It only stores and returns the DE test results (i.e. p-values). The error matrix
 }
 \examples{
 \dontrun{
+# download count table
+githubURL <- "https://github.com/bvieth/powsimRData/raw/master/data-raw/kolodziejczk_cnts.rda"
+download.file(url = githubURL, destfile= "kolodziejczk_cnts.rda", method = "wget")
+load('kolodziejczk_cnts.rda')
+kolodziejczk_cnts <- kolodziejczk_cnts[, grep('standard', colnames(kolodziejczk_cnts))]
+## estimate NB parameters:
+TwoiLIF.params = estimateNBParam(countData = kolodziejczk_cnts,
+cData = NULL, design = NULL,
+RNAseq = 'singlecell', estFramework = 'MatchMoments',
+sigma= 1.96)
 ## define DE settings:
 desettings <- DESetup(ngenes=10000,
 nsims=25, p.DE=0.2,
 LFC=function(x) sample(c(-1,1), size=x,replace=TRUE)*rgamma(x, 3, 3))
 ## define simulation settings for Kolodziejczk:
-simsettings <- SimSetup(desetup=desettings, params='kolodziejczk', size.factors='given')
+simsettings <- SimSetup(desetup=desettings, params=TwoiLIF.params, size.factors='given')
 ## run simulations:
 simres <- simulateDE(n1=c(24,48,96,192,384,800),
 n2=c(24,48,96,192,384,800),
 sim.settings=simsettings,
 ncores=10, DEmethod="MAST", verbose=TRUE)
+## if parallel computation unavailable, consider ROTS as DEmethod
 }
 }
 \seealso{
-\code{\link{SimSetup}}
+\code{\link{estimateNBParam}},  \code{\link{insilicoNBParam}} for negative binomial parameter specifications; \code{\link{DESetup}}, \code{\link{SimSetup}} for simulation setup
 }
 \author{
 Beate Vieth

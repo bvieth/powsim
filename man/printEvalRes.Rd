@@ -17,12 +17,7 @@ This function takes as input a result object from \code{\link{evaluateSim}} and 
 }
 \examples{
 \dontrun{
-data("kolodziejczk_simDE")
-evalres <- evaluateSim(simRes=kolodziejczk_simDE,
-alpha.type="adjusted", MTC="BH",
-alpha.nominal=0.1,
-stratify.by="mean", filter.by="none",
-target.by="lfc", delta=0)
+## for example evaluation result see \\code{\\link{evaluateSim}}
 printEvalRes(evalRes=evalres)
 }
 }

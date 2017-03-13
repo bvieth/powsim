@@ -41,6 +41,7 @@
 #' @seealso \code{\link{estimateNBParam}} for negative binomial parameters, \code{\link{SimSetup}} and \code{\link{DESetup}} for setting up simulation parameters and \code{\link{simulateDE}} for simulating differential expression.
 #' @examples
 #' \dontrun{
+#' ## for example DE simulation result see \code{\link{simulateDE}}
 #' evalres <- evaluateSim(simRes=simres,
 #' alpha.type="adjusted",
 #' MTC="BH", alpha.nominal=0.1,

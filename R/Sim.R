@@ -16,7 +16,7 @@
 #' @param n1,n2 Integer vectors specifying the number of biological replicates in each group. Default values are n1=c(20,50,100) and n2=c(30,60,120).
 #' @param sim.settings This object specifies the simulation setup. This must be the return object from \code{\link{SimSetup}}.
 #' @param ncores integer positive number of cores for parallel processing, default is NULL, ie 1 core.
-#' @param DEmethod String to specify the DE detection method to be used. Available options are: edgeRglm, edgeRQL, DESeq2, limma, ROTS, baySeq, NOISeq, DSS, TSPM, MAST, scde, BPSC.
+#' @param DEmethod String to specify the DE detection method to be used. Available options are: edgeRglm, edgeRQL, DESeq2, limma, ROTS, baySeq, NOISeq, DSS, TSPM, MAST, scde, BPSC, scDD.
 #' @param verbose Logical value to indicate whether to show progress report of simulations. Default is TRUE.
 #' @return A list with the following fields. The dimensions for the 3D arrays are ngenes * N * nsims:
 #' \item{pvalue, fdr}{3D array for p-values and FDR from each simulation. Note that FDR values will be empty and the calculation will be done by \code{\link{evaluateSim}}} whenever applicable.
@@ -24,20 +24,31 @@
 #' \item{n1,n2}{The input number of biological replicates in each group. The vectors must have the same length.}
 #' \item{time.taken}{The time taken for each simulation, given for read count simulation, DEA and moment estimation. }
 #' @author Beate Vieth
-#' @seealso \code{\link{SimSetup}}
+#' @seealso \code{\link{estimateNBParam}},  \code{\link{insilicoNBParam}} for negative binomial parameter specifications; \code{\link{DESetup}}, \code{\link{SimSetup}} for simulation setup
 #' @examples
 #' \dontrun{
+#' # download count table
+#' githubURL <- "https://github.com/bvieth/powsimRData/raw/master/data-raw/kolodziejczk_cnts.rda"
+#' download.file(url = githubURL, destfile= "kolodziejczk_cnts.rda", method = "wget")
+#' load('kolodziejczk_cnts.rda')
+#' kolodziejczk_cnts <- kolodziejczk_cnts[, grep('standard', colnames(kolodziejczk_cnts))]
+#' ## estimate NB parameters:
+#' TwoiLIF.params = estimateNBParam(countData = kolodziejczk_cnts,
+#' cData = NULL, design = NULL,
+#' RNAseq = 'singlecell', estFramework = 'MatchMoments',
+#' sigma= 1.96)
 #' ## define DE settings:
 #' desettings <- DESetup(ngenes=10000,
 #' nsims=25, p.DE=0.2,
 #' LFC=function(x) sample(c(-1,1), size=x,replace=TRUE)*rgamma(x, 3, 3))
 #' ## define simulation settings for Kolodziejczk:
-#' simsettings <- SimSetup(desetup=desettings, params='kolodziejczk', size.factors='given')
+#' simsettings <- SimSetup(desetup=desettings, params=TwoiLIF.params, size.factors='given')
 #' ## run simulations:
 #' simres <- simulateDE(n1=c(24,48,96,192,384,800),
 #' n2=c(24,48,96,192,384,800),
 #' sim.settings=simsettings,
 #' ncores=10, DEmethod="MAST", verbose=TRUE)
+#' ## if parallel computation unavailable, consider ROTS as DEmethod
 #' }
 #' @rdname simulateDE
 #' @export
@@ -129,8 +140,8 @@ simulateDE <- function(n1=c(20,50,100), n2=c(30,60,120), sim.settings, ncores=NU
           res = .run.BPSC(data0)
        # if (DEmethod == "monocle")
        #    res = .run.monocle(data0)
-      # if (DEmethod == "scDD")
-      #     res = .run.scDD(data0)
+      if (DEmethod == "scDD")
+          res = .run.scDD(data0)
 
       ## extract results of DE testing
       res.tmp = res$result

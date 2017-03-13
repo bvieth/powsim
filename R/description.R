@@ -40,11 +40,13 @@ write.dcf(list(Package = "powsim",
                           DSS,
                           MAST,
                           scde,
+                          scDD,
                           ROTS,
                           BPSC,
                           IHW,
                           qvalue",
-               Remotes = "gu-mi/NBGOF, hms-dbmi/scde, nghiavtr/BPSC",
+               Remotes = "url::https://github.com/kdkorthauer/scDD/archive/develop.zip,
+               gu-mi/NBGOF, hms-dbmi/scde, nghiavtr/BPSC",
                Depends = "R (>= 3.3),
                           gamlss.dist",
                Suggests = "BiocStyle,
@@ -58,8 +60,5 @@ write.dcf(list(Package = "powsim",
                file = "DESCRIPTION")
 
 # old Imports
-# monocle, VGAM, NBPSeq,
-# old Remotes
-# kdkorthauer/scDD
-# https://api.github.com/repos/kdkorthauer/scDD/zipball/develop
-#                VignetteBuilder = 'knitr',
+# monocle, VGAM, NBPSeq
+

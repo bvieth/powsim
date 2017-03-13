@@ -24,6 +24,7 @@ This function plots the results of \code{\link{evaluateSim}} for assessing the e
 }
 \examples{
 \dontrun{
+## for example simres object see \\code{\\link{simulateDE}}
 evalres <- evaluateSim(simRes=simres,
 alpha.type="adjusted",
 MTC="BH", alpha.nominal=0.1,

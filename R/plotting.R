@@ -101,6 +101,7 @@ plotNBParam <- function(estParam.out, annot=TRUE) {
 #' @return A ggplot object.
 #' @examples
 #' \dontrun{
+#' ## for example simres object see \code{\link{simulateDE}}
 #' evalres <- evaluateSim(simRes=simres,
 #' alpha.type="adjusted",
 #' MTC="BH", alpha.nominal=0.1,

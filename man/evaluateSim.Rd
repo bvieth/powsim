@@ -56,6 +56,7 @@ Define biologically interesting genes: We provide two options to define biologic
 }
 \examples{
 \dontrun{
+## for example DE simulation result see \\code{\\link{simulateDE}}
 evalres <- evaluateSim(simRes=simres,
 alpha.type="adjusted",
 MTC="BH", alpha.nominal=0.1,

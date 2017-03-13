@@ -1,6 +1,3 @@
-######################################
-## edgeR
-######################################
 #' @importFrom edgeR DGEList calcNormFactors estimateDisp glmQLFit glmQLFTest topTags
 #' @importFrom stats model.matrix
 .run.edgeRglm <- function(dat) {
@@ -93,9 +90,6 @@
   return(res)
 }
 
-######################################
-## voom + limma
-######################################
 #' @importFrom limma lmFit eBayes voom topTable
 #' @importFrom edgeR DGEList calcNormFactors
 #' @importFrom stats model.matrix
@@ -147,9 +141,6 @@
   return(res)
 }
 
-######################################
-## DEseq2
-######################################
 #' @importFrom DESeq2 DESeqDataSetFromMatrix estimateSizeFactors DESeq sizeFactors results
 #' @importFrom BiocParallel MulticoreParam
 #' @importFrom scater sizeFactors
@@ -201,10 +192,6 @@
   return(res)
 }
 
-
-######################################
-## ROTS
-######################################
 #' @importFrom edgeR DGEList calcNormFactors cpm.DGEList
 #' @importFrom ROTS ROTS
 .run.ROTS <- function(dat) {
@@ -254,9 +241,6 @@
   return(res)
 }
 
-######################################
-## baySeq
-######################################
 #' @importFrom edgeR DGEList calcNormFactors cpm.DGEList
 #' @importFrom parallel makeCluster stopCluster
 #' @importMethodsFrom baySeq libsizes
@@ -330,11 +314,6 @@
   return(res)
 }
 
-
-######################################
-## NOISeq
-######################################
-
 #' @importFrom NOISeq readData noiseqbio
 #' @importFrom edgeR DGEList calcNormFactors cpm.DGEList
 .run.NOISeq <- function(dat) {
@@ -396,9 +375,6 @@
   return(res)
 }
 
-######################################
-## DSS
-######################################
 #' @importFrom DSS newSeqCountSet estNormFactors estDispersion waldTest
 #' @importFrom edgeR DGEList calcNormFactors
 #' @importFrom scater sizeFactors
@@ -464,10 +440,6 @@
   return(res)
 }
 
-######################################
-## EBSeq
-######################################
-
 #' @importFrom EBSeq MedianNorm EBTest
 #' @importFrom edgeR DGEList calcNormFactors
 #' @importFrom scater sizeFactors
@@ -525,9 +497,6 @@
   return(res)
 }
 
-######################################
-## NBPSeq
-######################################
 #' #' @importFrom NBPSeq nbp.test
 #' #' @importFrom edgeR DGEList calcNormFactors
 #' .run.NBPSeq <- function(dat) {
@@ -579,9 +548,6 @@
 #' }
 
 
-######################################
-## TSPM
-######################################
 #' #' @importFrom edgeR DGEList calcNormFactors
 #' .run.TSPM <- function(dat) {
 #'
@@ -637,9 +603,6 @@
 #' }
 
 
-######################################
-## MAST
-######################################
 #' @importFrom MAST FromMatrix zlm.SingleCellAssay lrTest
 #' @importFrom S4Vectors mcols
 #' @importFrom AnnotationDbi as.list
@@ -716,9 +679,6 @@
   return(res)
 }
 
-######################################
-## get pvalues and FDR from scde
-######################################
 #' @importFrom scde scde.error.models scde.expression.prior scde.expression.difference
 #' @importFrom stats pnorm
 .run.scde <- function(dat) {
@@ -792,9 +752,6 @@
   }
 }
 
-######################################
-## BPSC
-######################################
 #' @importFrom BPSC BPglm
 #' @importFrom edgeR DGEList calcNormFactors cpm.DGEList
 #' @importFrom parallel makeCluster stopCluster
@@ -861,9 +818,6 @@
   return(res)
 }
 
-######################################
-## monocle
-######################################
 #' #' @importFrom monocle newCellDataSet differentialGeneTest
 #' #' @importFrom VGAM tobit
 #' #' @importFrom edgeR cpm.DGEList
@@ -929,73 +883,66 @@
 #'     return(res)
 #' }
 
-######################################
-## scDD
-######################################
-#' #' @importFrom scDD scDD
-#' #' @importFrom edgeR cpm.DGEList
-#' #' @importFrom Biobase ExpressionSet
-#' .run.scDD <- function(dat) {
-#'   if (dat$RNAseq=="bulk") {
-#'     stop("scDD is only for single cell RNAseq data analysis")
-#'   }
-#'   if (dat$RNAseq=="singlecell") {
-#'     start.time.params <- Sys.time()
-#'     # make sceset and calculate size factors
-#'     sce <- .scran.calc(cnts = dat$counts)
-#'     dge <- .convertToedgeR(sce)
-#'     dge$samples$group <- factor(dat$designs)
-#'   }
-#'   # size factor normalised CPM values.
-#'   out.cpm <- edgeR::cpm.DGEList(dge, normalized.lib.sizes = T, log = F)
-#'
-#'   # create input data
-#'   exprmat <- out.cpm
-#'   condition <- ifelse(dat$designs==-1, 1, 2)
-#'   cell.dat <- data.frame(row.names=colnames(exprmat), condition=condition)
-#'   SCdat <- Biobase::ExpressionSet(assayData=exprmat, phenoData=as(cell.dat, "AnnotatedDataFrame"))
-#'   end.time.params <- Sys.time()
-#'
-#'   # DE testing
-#'   if(!is.null(dat$ncores)) {
-#'     start.time.DE <- Sys.time()
-#'     res.tmp <- scDD::scDD(SCdat, prior_param = list(alpha = 0.1, mu0 = 0, s0 = 0.01, a0 = 0.01, b0 = 0.01), permutations = 20, testZeroes = FALSE, adjust.perms = FALSE, n.cores = dat$ncores, parallelBy = "Genes", condition = "condition")
-#'     end.time.DE <- Sys.time()
-#'   }
-#'   if(is.null(dat$ncores)) {
-#'     start.time.DE <- Sys.time()
-#'     res.tmp <- scDD(SCdat, prior_param = list(alpha = 0.1, mu0 = 0, s0 = 0.01, a0 = 0.01, b0 = 0.01), permutations = 20, testZeroes = FALSE, adjust.perms = FALSE, n.cores = 1, parallelBy = "Genes", condition = "condition")
-#'     end.time.params <- Sys.time()
-#'   }
-#'   res <- res.tmp$Genes
-#'
-#'   # mean, disp, dropout
-#'   start.time.NB <- Sys.time()
-#'   norm.counts <- dge$counts / dge$samples$norm.factors
-#'   nsamples <- ncol(norm.counts)
-#'   counts0 <- norm.counts == 0
-#'   nn0 <- rowSums(!counts0)
-#'   p0 <- (nsamples - nn0)/nsamples
-#'   means = rowSums(norm.counts)/nsamples
-#'   s2 = rowSums((norm.counts - means)^2)/(nsamples - 1)
-#'   size = means^2/(s2 - means + 1e-04)
-#'   size = ifelse(size > 0, size, NA)
-#'   dispersion = 1/size
-#'   end.time.NB <- Sys.time()
-#'
-#'   # construct result data frame
-#'   result=data.frame(geneIndex=as.character(res$gene), means=means, dispersion=dispersion, dropout=p0, pval=res$nonzero.pvalue, fdr=rep(NA, nrow(dat$counts)), stringsAsFactors = F)
-#'   time.taken.params <- difftime(end.time.params, start.time.params, units="mins")
-#'   time.taken.DE <- difftime(end.time.DE, start.time.DE, units="mins")
-#'   time.taken.NB <- difftime(end.time.NB, start.time.NB, units="mins")
-#'   timing <- rbind(time.taken.params, time.taken.DE, time.taken.NB)
-#'   res <- list(result=result, timing=timing)
-#'   return(res)
-#' }
+#' @importFrom scDD scDD
+#' @importFrom edgeR cpm.DGEList
+#' @importFrom Biobase ExpressionSet
+.run.scDD <- function(dat) {
+  if (dat$RNAseq=="bulk") {
+    stop("scDD is only for single cell RNAseq data analysis")
+  }
+  if (dat$RNAseq=="singlecell") {
+    start.time.params <- Sys.time()
+    # make sceset and calculate size factors
+    sce <- .scran.calc(cnts = dat$counts)
+    dge <- .convertToedgeR(sce)
+    dge$samples$group <- factor(dat$designs)
+  }
+  # size factor normalised CPM values.
+  out.cpm <- edgeR::cpm.DGEList(dge, normalized.lib.sizes = T, log = F)
 
+  # create input data
+  exprmat <- out.cpm
+  condition <- ifelse(dat$designs==-1, 1, 2)
+  cell.dat <- data.frame(row.names=colnames(exprmat), condition=condition)
+  SCdat <- Biobase::ExpressionSet(assayData=exprmat, phenoData=as(cell.dat, "AnnotatedDataFrame"))
+  end.time.params <- Sys.time()
 
-######################################
-## D3E
-######################################
+  # DE testing
+  if(!is.null(dat$ncores)) {
+    start.time.DE <- Sys.time()
+    res.tmp <- scDD::scDD(SCdat, prior_param = list(alpha = 0.1, mu0 = 0, s0 = 0.01, a0 = 0.01, b0 = 0.01), permutations = 20, testZeroes = FALSE, adjust.perms = FALSE, n.cores = dat$ncores, parallelBy = "Genes", condition = "condition")
+    end.time.DE <- Sys.time()
+  }
+  if(is.null(dat$ncores)) {
+    start.time.DE <- Sys.time()
+    res.tmp <- scDD(SCdat, prior_param = list(alpha = 0.1, mu0 = 0, s0 = 0.01, a0 = 0.01, b0 = 0.01), permutations = 20, testZeroes = FALSE, adjust.perms = FALSE, n.cores = 1, parallelBy = "Genes", condition = "condition")
+    end.time.params <- Sys.time()
+  }
+  res <- res.tmp$Genes
+
+  # mean, disp, dropout
+  start.time.NB <- Sys.time()
+  norm.counts <- dge$counts / dge$samples$norm.factors
+  nsamples <- ncol(norm.counts)
+  counts0 <- norm.counts == 0
+  nn0 <- rowSums(!counts0)
+  p0 <- (nsamples - nn0)/nsamples
+  means = rowSums(norm.counts)/nsamples
+  s2 = rowSums((norm.counts - means)^2)/(nsamples - 1)
+  size = means^2/(s2 - means + 1e-04)
+  size = ifelse(size > 0, size, NA)
+  dispersion = 1/size
+  end.time.NB <- Sys.time()
+
+  # construct result data frame
+  result=data.frame(geneIndex=as.character(res$gene), means=means, dispersion=dispersion, dropout=p0, pval=res$nonzero.pvalue, fdr=rep(NA, nrow(dat$counts)), stringsAsFactors = F)
+  time.taken.params <- difftime(end.time.params, start.time.params, units="mins")
+  time.taken.DE <- difftime(end.time.DE, start.time.DE, units="mins")
+  time.taken.NB <- difftime(end.time.NB, start.time.NB, units="mins")
+  timing <- rbind(time.taken.params, time.taken.DE, time.taken.NB)
+  res <- list(result=result, timing=timing)
+  return(res)
+}
+
 
 # TODO: Do a system call since D3E is written in python

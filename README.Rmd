@@ -38,22 +38,19 @@ cranpackages <- c("gamlss.dist", "methods", "stats", "moments", "doParallel", "p
 ipak(cranpackages, repository='CRAN')
 
 # BIOCONDUCTOR
-biocpackages <- c('S4Vectors', 'AnnotationDbi', 'Biobase', 'BiocParallel', 'scater', 'scran', 'edgeR', 'limma', 'DESeq2', 'baySeq', 'NOISeq', 'EBSeq', 'DSS', 'MAST', 'ROTS', "IHW", 'qvalue')
+biocpackages <- c('S4Vectors', 'AnnotationDbi', 'Biobase', 'BiocParallel', 'BiocStyle', 'scater', 'scran', 'edgeR', 'limma', 'DESeq2', 'baySeq', 'NOISeq', 'EBSeq', 'DSS', 'MAST', 'ROTS', "IHW", 'qvalue')
 ipak(biocpackages, repository='Bioconductor')
 
 # GITHUB
 githubpackages <- c('gu-mi/NBGOF', 'hms-dbmi/scde', 'nghiavtr/BPSC')
 ipak(githubpackages, repository = 'github')
-# devtools::install_github('kdkorthauer/scDD', build_vignettes = FALSE, ref = 'develop')
+devtools::install_github('kdkorthauer/scDD', build_vignettes = FALSE, ref = 'develop')
 ```
 
 After installing the dependencies, powsim can be installed by using devtools as well.
 
 ```{r, eval=F}
-# if bioconductor BiocStyle is available
 devtools::install_github('bvieth/powsim', build_vignettes = TRUE)
-# otherwise
-devtools::install_github('bvieth/powsim', build_vignettes = FALSE)
 ```
 
 For examples and tips on using the package, please see the vignette PDF 
