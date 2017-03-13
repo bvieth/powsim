@@ -8,7 +8,7 @@ Imports: methods, stats, moments, S4Vectors, AnnotationDbi, Biobase, BiocParalle
            reshape2, dplyr, tidyr, data.table, ggplot2, ggthemes, ggExtra, cowplot, scales,
            fitdistrplus, NBGOF, MASS, pscl, nonnest2, cobs, msir, drc, scran, scater, edgeR, limma,
            DESeq2, baySeq, NOISeq, EBSeq, DSS, MAST, scde, scDD, ROTS, BPSC, IHW, qvalue
-Remotes: https://github.com/kdkorthauer/scDD/archive/develop.zip, gu-mi/NBGOF, hms-dbmi/scde,
+Remotes: url::https://github.com/kdkorthauer/scDD/archive/develop.zip, gu-mi/NBGOF, hms-dbmi/scde,
            nghiavtr/BPSC
 Depends: R (>= 3.3), gamlss.dist
 Suggests: BiocStyle, knitr
