@@ -11,8 +11,7 @@ Imports: methods, stats, moments, S4Vectors, AnnotationDbi, Biobase,
         fitdistrplus, NBGOF, MASS, pscl, nonnest2, cobs, msir, drc,
         scran, scater, edgeR, limma, DESeq2, baySeq, NOISeq, EBSeq,
         DSS, MAST, scde, scDD, ROTS, BPSC, IHW, qvalue
-Remotes:
-        url::https://api.github.com/repos/kdkorthauer/scDD/zipball/develop,
+Remotes: git::https://github.com/kdkorthauer/scDD/tree/develop,
         gu-mi/NBGOF, hms-dbmi/scde, nghiavtr/BPSC
 Depends: R (>= 3.3), gamlss.dist
 Suggests: BiocStyle, knitr
@@ -22,4 +21,3 @@ NeedsCompilation: no
 Author: Beate Vieth
 Date: 2017-03-13
 Maintainer: Beate Vieth <vieth@bio.lmu.de>
-RoxygenNote: 6.0.1
