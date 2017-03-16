@@ -51,6 +51,8 @@ For examples and tips on using the package, please see the vignette PDF [here](h
 
 after installing and loading the package into R.
 
+A preprint paper describing powsim is now on [bioRxiv](https://doi.org/10.1101/117150).
+
 Please send bug reports and feature requests by opening a new issue on [this page](https://github.com/bvieth/powsim/issues)
 
 Note that the error "maximal number of DLLs reached..." might occur due to the loading of many shared objects by Bioconductor packages. Restarting the R session after installing dependencies / powsim will help.
