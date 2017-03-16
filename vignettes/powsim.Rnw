@@ -284,9 +284,9 @@ We have also implemented the option to approximate the read count matrix simulat
 
 The same functionality can also be used for bulk RNA-seq.
 
-\subsubsection{Precalculated Parameter Estimates}
+\subsubsection{Count matrices of single cell RNA-seq experiments}
 
-We have uploaded read count matrices of 5 single cell RNA-seq experiments on \url{github}{https://github.com/bvieth/powsimRData} .
+We have uploaded read count matrices of 5 single cell RNA-seq experiments on \href{https://github.com/bvieth/powsimRData}{github}.
 The user can calculate the negative binomial parameters with \Rfunction{estimateNBParam}, view these estimates with \Rfunction{plotNBParam} and use it as an input for \Rfunction{SimSetup}.
 
 %\subsubsection{Access to raw read counts stored in recount data base}
