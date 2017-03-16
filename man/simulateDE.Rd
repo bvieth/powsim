@@ -24,7 +24,7 @@ verbose=TRUE)
 }
 \value{
 A list with the following fields. The dimensions for the 3D arrays are ngenes * N * nsims:
-\item{pvalue, fdr}{3D array for p-values and FDR from each simulation. Note that FDR values will be empty and the calculation will be done by \code{\link{evaluateSim}}} whenever applicable.
+\item{pvalue, fdr}{3D array for p-values and FDR from each simulation. Note that FDR values will be empty and the calculation will be done by \code{\link{evaluateSim}} whenever applicable.}
 \item{mu,disp,dropout}{3D array for mean, dispersion and dropout of library size factor normalized read counts}
 \item{n1,n2}{The input number of biological replicates in each group. The vectors must have the same length.}
 \item{time.taken}{The time taken for each simulation, given for read count simulation, DEA and moment estimation. }
@@ -33,7 +33,7 @@ A list with the following fields. The dimensions for the 3D arrays are ngenes * 
 This function simulates RNA-seq count matrices considering differential expression specifications (number of samples per group, effect size, number of differential expressed genes etc.). The return object contains DE test results from all simulations as well as descriptive statistics.
 }
 \details{
-simulateDE is the main function to simulate differential expression for RNA-seq experiments. The simulation parameters are specified with  \code{\link{SimSetup}}). The user needs to specify the number of samples per group and the differential expression analysis method. \cr
+simulateDE is the main function to simulate differential expression for RNA-seq experiments. The simulation parameters are specified with  \code{\link{SimSetup}}. The user needs to specify the number of samples per group and the differential expression analysis method. \cr
 It only stores and returns the DE test results (i.e. p-values). The error matrix calculations will be conducted with \code{\link{evaluateSim}}.\cr
 }
 \examples{
@@ -63,7 +63,8 @@ ncores=10, DEmethod="MAST", verbose=TRUE)
 }
 }
 \seealso{
-\code{\link{estimateNBParam}},  \code{\link{insilicoNBParam}} for negative binomial parameter specifications; \code{\link{DESetup}}, \code{\link{SimSetup}} for simulation setup
+\code{\link{estimateNBParam}},  \code{\link{insilicoNBParam}} for negative binomial parameter specifications;\cr
+ \code{\link{DESetup}}, \code{\link{SimSetup}} for simulation setup
 }
 \author{
 Beate Vieth

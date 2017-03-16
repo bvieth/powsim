@@ -54,7 +54,7 @@
 #' @importFrom qvalue qvalue
 #' @importFrom IHW ihw adj_pvalues
 #' @export
-evaluateSim <- function(simRes, alpha.type=c("adjusted","raw"), MTC=c("BH", "BY"), alpha.nominal=0.1,
+evaluateSim <- function(simRes, alpha.type=c("adjusted","raw"), MTC=c('BH', 'BY', 'holm', 'hochberg', 'hommel', 'bonferroni', 'Storey', 'IHW'), alpha.nominal=0.1,
                              stratify.by=c("mean", "dispersion", "dropout"),
                              filter.by=c("none", "mean", "dispersion", "dropout"), strata.filtered=1,
                              target.by=c("lfc", "effectsize"), delta=0) {
