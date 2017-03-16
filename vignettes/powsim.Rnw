@@ -140,7 +140,7 @@ TwoiLIF.params = estimateNBParam(countData = kolodziejczk_cnts,
                                RNAseq = 'singlecell',
                                estFramework = 'MatchMoments',
                                sigma= 1.96)
-plotNBParam(TwoiLif.params)
+plotNBParam(TwoiLIF.params)
 @
 
 We have implemented a read count simulation framework assuming an underlying negative binomial distribution.

@@ -44,51 +44,51 @@
   return(res)
 }
 
-#' @importFrom edgeR DGEList calcNormFactors estimateDisp glmFit glmLRT topTags
-#' @importFrom stats model.matrix
-.run.edgeRql <- function(dat) {
-  start.time.params <- Sys.time()
-  ## run edgeR
-  dge <- edgeR::DGEList(counts=dat$counts, group=factor(dat$designs))
-  if (dat$RNAseq=="bulk") {
-    dge <- edgeR::calcNormFactors(dge)
-  }
-  if (dat$RNAseq=="singlecell") {
-    # make sceset and calculate size factors
-    sce <- .scran.calc(cnts = dat$counts)
-    dge <- .convertToedgeR(sce)
-    dge$samples$group <- factor(dat$designs)
-  }
-
-  # DE testing
-  design.mat <- stats::model.matrix(~ dat$designs)
-  dge <- edgeR::estimateDisp(y=dge, design = design.mat)
-  end.time.params <- Sys.time()
-  start.time.DE <- Sys.time()
-  fit.edgeR <- edgeR::glmQLFit(dge, design = design.mat, robust=T)
-  Ftest.edgeR <- edgeR::glmQLFTest(fit.edgeR)
-  res.edgeR <- edgeR::topTags(Ftest.edgeR, adjust.method="BH", n=Inf, sort.by = 'none')
-  end.time.DE <- Sys.time()
-
-  # mean, disp, dropout
-  start.time.NB <- Sys.time()
-  means <- rowMeans(dge$counts / dge$samples$norm.factors)
-  dispersion <- dge$tagwise.dispersion
-  nsamples <- ncol(dge$counts)
-  counts0 <- dge$counts == 0
-  nn0 <- rowSums(!counts0)
-  p0 <- (nsamples - nn0)/nsamples
-  end.time.NB <- Sys.time()
-
-  ## construct results
-  result <- data.frame(geneIndex=rownames(res.edgeR$table), means=means, dispersion=dispersion, dropout=p0, pval=res.edgeR$table$PValue, fdr=rep(NA, nrow(dat$counts)), stringsAsFactors = F)
-  time.taken.params <- difftime(end.time.params, start.time.params, units="mins")
-  time.taken.DE <- difftime(end.time.DE, start.time.DE, units="mins")
-  time.taken.NB <- difftime(end.time.NB, start.time.NB, units="mins")
-  timing <- rbind(time.taken.params, time.taken.DE, time.taken.NB)
-  res <- list(result=result, timing=timing)
-  return(res)
-}
+#' #' @importFrom edgeR DGEList calcNormFactors estimateDisp glmFit glmLRT topTags
+#' #' @importFrom stats model.matrix
+#' .run.edgeRql <- function(dat) {
+#'   start.time.params <- Sys.time()
+#'   ## run edgeR
+#'   dge <- edgeR::DGEList(counts=dat$counts, group=factor(dat$designs))
+#'   if (dat$RNAseq=="bulk") {
+#'     dge <- edgeR::calcNormFactors(dge)
+#'   }
+#'   if (dat$RNAseq=="singlecell") {
+#'     # make sceset and calculate size factors
+#'     sce <- .scran.calc(cnts = dat$counts)
+#'     dge <- .convertToedgeR(sce)
+#'     dge$samples$group <- factor(dat$designs)
+#'   }
+#'
+#'   # DE testing
+#'   design.mat <- stats::model.matrix(~ dat$designs)
+#'   dge <- edgeR::estimateDisp(y=dge, design = design.mat)
+#'   end.time.params <- Sys.time()
+#'   start.time.DE <- Sys.time()
+#'   fit.edgeR <- edgeR::glmQLFit(dge, design = design.mat, robust=T)
+#'   Ftest.edgeR <- edgeR::glmQLFTest(fit.edgeR)
+#'   res.edgeR <- edgeR::topTags(Ftest.edgeR, adjust.method="BH", n=Inf, sort.by = 'none')
+#'   end.time.DE <- Sys.time()
+#'
+#'   # mean, disp, dropout
+#'   start.time.NB <- Sys.time()
+#'   means <- rowMeans(dge$counts / dge$samples$norm.factors)
+#'   dispersion <- dge$tagwise.dispersion
+#'   nsamples <- ncol(dge$counts)
+#'   counts0 <- dge$counts == 0
+#'   nn0 <- rowSums(!counts0)
+#'   p0 <- (nsamples - nn0)/nsamples
+#'   end.time.NB <- Sys.time()
+#'
+#'   ## construct results
+#'   result <- data.frame(geneIndex=rownames(res.edgeR$table), means=means, dispersion=dispersion, dropout=p0, pval=res.edgeR$table$PValue, fdr=rep(NA, nrow(res.edgeR$table)), stringsAsFactors = F)
+#'   time.taken.params <- difftime(end.time.params, start.time.params, units="mins")
+#'   time.taken.DE <- difftime(end.time.DE, start.time.DE, units="mins")
+#'   time.taken.NB <- difftime(end.time.NB, start.time.NB, units="mins")
+#'   timing <- rbind(time.taken.params, time.taken.DE, time.taken.NB)
+#'   res <- list(result=result, timing=timing)
+#'   return(res)
+#' }
 
 #' @importFrom limma lmFit eBayes voom topTable
 #' @importFrom edgeR DGEList calcNormFactors
@@ -242,7 +242,7 @@
 }
 
 #' @importFrom edgeR DGEList calcNormFactors cpm.DGEList
-#' @importFrom parallel makeCluster stopCluster
+#' @importFrom snow makeCluster stopCluster
 #' @importMethodsFrom baySeq libsizes
 #' @importFrom baySeq getPriors.NB getLikelihoods topCounts
 .run.baySeq <- function(dat) {
@@ -263,7 +263,7 @@
     cl <- NULL
   }
   if(!is.null(dat$ncores)) {
-    cl <- parallel::makeCluster(dat$ncores)
+    cl <- snow::makeCluster(dat$ncores)
   }
 
   # make input data sets for baySeq
@@ -287,7 +287,7 @@
   end.time.DE <- Sys.time()
   # free multiple cores
   if(!is.null(dat$ncores)) {
-    parallel::stopCluster(cl)
+    snow::stopCluster(cl)
   }
 
   # mean, disp, dropout
@@ -401,7 +401,7 @@
     end.time.params <- Sys.time()
     start.time.DE <- Sys.time()
     # run DE detection
-    res.dss <- DSS::waldTest(seqData = seqData, sampleA = 0, sampleB = 1)
+    res.dss <- suppressWarnings(DSS::waldTest(seqData = seqData, sampleA = 0, sampleB = 1))
     res.dss <- res.dss[order(res.dss$geneIndex),]
     pval <- res.dss$pval
     end.time.DE <- Sys.time()
@@ -419,7 +419,7 @@
     end.time.params <- Sys.time()
     start.time.DE <- Sys.time()
     # run DE detection
-    res.dss <- DSS::waldTest(seqData = seqData, sampleA = 0, sampleB = 1)
+    res.dss <- suppressWarnings(DSS::waldTest(seqData = seqData, sampleA = 0, sampleB = 1))
     res.dss <- res.dss[order(res.dss$geneIndex),]
     pval <- res.dss$pval
     end.time.DE <- Sys.time()
@@ -498,7 +498,7 @@
   end.time.NB <- Sys.time()
 
   # construct result data frame
-  result=data.frame(geneIndex=rownames(dat$counts), means=means, dispersion=dispersion, dropout=p0, pval=rep(NA, nrow(res)), fdr=fdr, stringsAsFactors = F)
+  result=data.frame(geneIndex=rownames(dat$counts), means=means, dispersion=dispersion, dropout=p0, pval=rep(NA, nrow(dat$counts)), fdr=fdr, stringsAsFactors = F)
   time.taken.params <- difftime(end.time.params, start.time.params, units="mins")
   time.taken.DE <- difftime(end.time.DE, start.time.DE, units="mins")
   time.taken.NB <- difftime(end.time.NB, start.time.NB, units="mins")
