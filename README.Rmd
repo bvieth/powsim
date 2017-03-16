@@ -56,10 +56,7 @@ devtools::install_github('bvieth/powsim', build_vignettes = TRUE)
 For examples and tips on using the package, please see the vignette PDF 
 [here](https://github.com/bvieth/powsim/tree/master/vignettes/powsim.pdf).
 
-after installing and loading the package into R.  
-
 A preprint paper describing powsim is now on [bioRxiv](https://doi.org/10.1101/117150).
-
 
 Please send bug reports and feature requests by opening a new issue on 
 [this page](https://github.com/bvieth/powsim/issues)
