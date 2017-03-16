@@ -26,7 +26,7 @@ ipak <- function(pkg, repository = c("CRAN", "Bioconductor", "github")) {
 cranpackages <- c("gamlss.dist", "methods", "stats", "moments", "doParallel", 
     "parallel", "reshape2", "dplyr", "tidyr", "data.table", "ggplot2", "ggthemes", 
     "ggExtra", "cowplot", "scales", "fitdistrplus", "MASS", "pscl", "nonnest2", 
-    "cobs", "msir", "drc", "devtools", "XML")
+    "cobs", "msir", "drc", "devtools", "XML", "splines")
 ipak(cranpackages, repository = "CRAN")
 
 # BIOCONDUCTOR
@@ -55,7 +55,7 @@ Please send bug reports and feature requests by opening a new issue on [this pag
 
 ``` r
 sessionInfo()
-#> R version 3.3.2 (2016-10-31)
+#> R version 3.3.3 (2017-03-06)
 #> Platform: x86_64-pc-linux-gnu (64-bit)
 #> Running under: Ubuntu 14.04.5 LTS
 #> 
@@ -72,7 +72,7 @@ sessionInfo()
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] backports_1.0.5 magrittr_1.5    rprojroot_1.2   formatR_1.4    
-#>  [5] tools_3.3.2     htmltools_0.3.5 yaml_2.1.14     Rcpp_0.12.9    
+#>  [5] tools_3.3.3     htmltools_0.3.5 yaml_2.1.14     Rcpp_0.12.9    
 #>  [9] stringi_1.1.2   rmarkdown_1.3   knitr_1.15.1    stringr_1.2.0  
 #> [13] digest_0.6.12   evaluate_0.10
 ```

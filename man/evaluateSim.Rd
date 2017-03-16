@@ -6,13 +6,11 @@
 \usage{
 evaluateSim(simRes,
 alpha.type=c("adjusted","raw"),
-MTC=c("BH", "BY"),
+MTC=c('BH', 'BY', 'holm', 'hochberg', 'hommel', 'bonferroni', 'Storey', 'IHW'),
 alpha.nominal=0.1,
 stratify.by=c("mean", "dispersion", "dropout"),
 filter.by=c("none", "mean", "dispersion", "dropout"),
-strata.filtered=1,
-target.by=c("lfc", "effectsize"),
-delta=0)
+strata.filtered=1, target.by=c("lfc", "effectsize"), delta=0)
 }
 \arguments{
 \item{simRes}{The result from \code{\link{simulateDE}}.}

@@ -34,7 +34,7 @@ ipak <- function(pkg, repository=c('CRAN', 'Bioconductor', 'github')){
 }
 
 # CRAN PACKAGES
-cranpackages <- c("gamlss.dist", "methods", "stats", "moments", "doParallel", "parallel", "reshape2", "dplyr", "tidyr", "data.table", 'ggplot2', 'ggthemes', 'ggExtra', 'cowplot', 'scales', 'fitdistrplus', 'MASS', 'pscl', 'nonnest2', 'cobs', 'msir', 'drc', 'devtools', 'XML')
+cranpackages <- c("gamlss.dist", "methods", "stats", "moments", "doParallel", "parallel", "reshape2", "dplyr", "tidyr", "data.table", 'ggplot2', 'ggthemes', 'ggExtra', 'cowplot', 'scales', 'fitdistrplus', 'MASS', 'pscl', 'nonnest2', 'cobs', 'msir', 'drc', 'devtools', 'XML', 'splines')
 ipak(cranpackages, repository='CRAN')
 
 # BIOCONDUCTOR

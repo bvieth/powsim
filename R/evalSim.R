@@ -11,13 +11,11 @@
 #' Define biologically interesting genes: We provide two options to define biologically interesting genes: by absolute values of log fold changes or effect sizes (absolute values of log fold changes divided by the square root of 1/(mean+dispersions)). Genes with these quantities over a threshold are deemed interesting, and the power calculation are based on these genes.
 #' @usage evaluateSim(simRes,
 #' alpha.type=c("adjusted","raw"),
-#' MTC=c("BH", "BY"),
+#' MTC=c('BH', 'BY', 'holm', 'hochberg', 'hommel', 'bonferroni', 'Storey', 'IHW'),
 #' alpha.nominal=0.1,
 #' stratify.by=c("mean", "dispersion", "dropout"),
 #' filter.by=c("none", "mean", "dispersion", "dropout"),
-#' strata.filtered=1,
-#' target.by=c("lfc", "effectsize"),
-#' delta=0)
+#' strata.filtered=1, target.by=c("lfc", "effectsize"), delta=0)
 #' @param simRes The result from \code{\link{simulateDE}}.
 #' @param MTC Multiple testing correction method to use. Available options are 1) see \link[stats]{p.adjust.methods}, 2) Storey's qvalue see \link[qvalue]{qvalue} and 3) Independent Hypothesis Weighting considering mean expression as covariate (see \link[IHW]{ihw}). Default is \code{BH}, i.e. Benjamini-Hochberg FDR correction method.
 #' @param alpha.type A string to represent the way to call DE genes. Available options are \code{"adjusted"} i.e. applying multiple testing correction and \code{"raw"} i.e. using p-values. Default is \code{"adjusted"}.

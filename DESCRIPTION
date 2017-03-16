@@ -13,7 +13,7 @@ Imports: methods, stats, moments, S4Vectors, AnnotationDbi, Biobase,
         DSS, MAST, scde, scDD, ROTS, BPSC, IHW, qvalue
 Remotes: kdkorthauer/scDD@develop, gu-mi/NBGOF, hms-dbmi/scde,
         nghiavtr/BPSC
-Depends: R (>= 3.3), gamlss.dist
+Depends: R (>= 3.3), gamlss.dist, splines
 Suggests: BiocStyle, knitr
 VignetteBuilder: knitr
 License: GPL

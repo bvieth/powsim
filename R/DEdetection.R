@@ -62,7 +62,7 @@
 
   # DE testing
   design.mat <- stats::model.matrix(~ dat$designs)
-  dge <- edgeR::estimateDisp(y=dge, design = design.mat, robust=T)
+  dge <- edgeR::estimateDisp(y=dge, design = design.mat)
   end.time.params <- Sys.time()
   start.time.DE <- Sys.time()
   fit.edgeR <- edgeR::glmQLFit(dge, design = design.mat, robust=T)
@@ -272,7 +272,7 @@
                  DE = c(ifelse(dat$designs==-1, 1, 2)))
   CD <- new("countData", data = dge$counts, replicates = replicates, groups = groups)
   # fill in library size factors
-  libsizes(CD) <- dge$samples$norm.factors * dge$samples$lib.size
+  CD@sampleObservables$libsizes <- dge$samples$norm.factors * dge$samples$lib.size
   CD@annotation <- data.frame(name = rownames(dge$counts), stringsAsFactors = F)
   # run prior estimation
   CD <- baySeq::getPriors.NB(CD, samplesize = nrow(dge$counts), estimation = "QL", cl = cl, equalDispersions=TRUE, verbose=F)
@@ -324,12 +324,15 @@
     dge <- edgeR::calcNormFactors(dge, method="TMM")
     # make input data set
     in.noiseq <- NOISeq::readData(data = dat$counts, factors = groups)
+    end.time.params <- Sys.time()
+    start.time.DE <- Sys.time()
     # run DE detection
     calc.noiseq <- NOISeq::noiseqbio(in.noiseq, k = NULL, norm = "tmm", nclust = 15, plot = FALSE,
                              factor="Group", conditions = NULL, lc = 0, r = 50, adj = 1.5,
                              a0per = 0.9, filter = 0)
     res <- calc.noiseq@results[[1]]
     res$fdr <- 1-res$prob
+    end.time.DE <- Sys.time()
   }
   if (dat$RNAseq=="singlecell") {
     # make sceset and calculate size factors
@@ -376,9 +379,11 @@
 }
 
 #' @importFrom DSS newSeqCountSet estNormFactors estDispersion waldTest
+#' @importFrom splines ns
 #' @importFrom edgeR DGEList calcNormFactors
 #' @importFrom scater sizeFactors
 .run.DSS <- function(dat) {
+  start.time.params <- Sys.time()
   # make input data set
   designs <- ifelse(dat$designs==-1, 0, 1)
   cd <- dat$counts
@@ -393,10 +398,13 @@
     # estimate size factors and dispersions
     seqData <- DSS::estNormFactors(seqData)
     seqData <- DSS::estDispersion(seqData)
+    end.time.params <- Sys.time()
+    start.time.DE <- Sys.time()
     # run DE detection
     res.dss <- DSS::waldTest(seqData = seqData, sampleA = 0, sampleB = 1)
     res.dss <- res.dss[order(res.dss$geneIndex),]
     pval <- res.dss$pval
+    end.time.DE <- Sys.time()
   }
   if (dat$RNAseq=="singlecell") {
     # make sceset and calculate size factors
@@ -408,11 +416,13 @@
     out.sf[out.sf<0] <- min(out.sf[out.sf > 0])
     seqData@normalizationFactor <- out.sf
     seqData <- DSS::estDispersion(seqData)
-
+    end.time.params <- Sys.time()
+    start.time.DE <- Sys.time()
     # run DE detection
     res.dss <- DSS::waldTest(seqData = seqData, sampleA = 0, sampleB = 1)
     res.dss <- res.dss[order(res.dss$geneIndex),]
     pval <- res.dss$pval
+    end.time.DE <- Sys.time()
   }
 
   # mean, disp, dropout
@@ -453,7 +463,7 @@
     end.time.params <- Sys.time()
     # run DE detection
     start.time.DE <- Sys.time()
-    calc.ebseq <- suppressMessages(EBSeq::EBTest(Data = dat$counts, NgVector = NULL, Conditions = groups, sizeFactors = sf, maxround = 20, Pool = F, NumBin = 1000, ApproxVal = 10^-10, Alpha = NULL, Beta = NULL, PInput = NULL, RInput = NULL, PoolLower = .25, PoolUpper = .75, Print = F, Qtrm = 1,QtrmCut=0))
+    calc.ebseq <- suppressMessages(EBSeq::EBTest(Data = dat$counts, NgVector = NULL, Conditions = factor(dat$designs), sizeFactors = sf, maxround = 20, Pool = F, NumBin = 1000, ApproxVal = 10^-10, Alpha = NULL, Beta = NULL, PInput = NULL, RInput = NULL, PoolLower = .25, PoolUpper = .75, Print = F, Qtrm = 1,QtrmCut=0))
     fdr <- 1-calc.ebseq$PPDE
     end.time.DE <- Sys.time()
   }
@@ -468,7 +478,7 @@
     end.time.params <- Sys.time()
     # run DE detection
     start.time.DE <- Sys.time()
-    calc.ebseq <- suppressMessages(EBSeq::EBTest(Data = dat$counts, NgVector = NULL, Conditions = groups, sizeFactors = sf, maxround = 20, Pool = F, NumBin = 1000, ApproxVal = 10^-10, Alpha = NULL, Beta = NULL, PInput = NULL, RInput = NULL, PoolLower = .25, PoolUpper = .75, Print = F, Qtrm = 1,QtrmCut=0))
+    calc.ebseq <- suppressMessages(EBSeq::EBTest(Data = dat$counts, NgVector = NULL, Conditions = factor(dat$designs), sizeFactors = sf, maxround = 20, Pool = F, NumBin = 1000, ApproxVal = 10^-10, Alpha = NULL, Beta = NULL, PInput = NULL, RInput = NULL, PoolLower = .25, PoolUpper = .75, Print = F, Qtrm = 1,QtrmCut=0))
     fdr <- 1-calc.ebseq$PPDE
     end.time.DE <- Sys.time()
   }
@@ -910,12 +920,12 @@
   # DE testing
   if(!is.null(dat$ncores)) {
     start.time.DE <- Sys.time()
-    res.tmp <- scDD::scDD(SCdat, prior_param = list(alpha = 0.1, mu0 = 0, s0 = 0.01, a0 = 0.01, b0 = 0.01), permutations = 20, testZeroes = FALSE, adjust.perms = FALSE, n.cores = dat$ncores, parallelBy = "Genes", condition = "condition")
+    res.tmp <- scDD::scDD(SCdat, prior_param = list(alpha = 0.1, mu0 = 0, s0 = 0.01, a0 = 0.01, b0 = 0.01), permutations = 0, testZeroes = FALSE, adjust.perms = FALSE, param = BiocParallel::MulticoreParam(dat$ncores), parallelBy = "Genes", condition = "condition")
     end.time.DE <- Sys.time()
   }
   if(is.null(dat$ncores)) {
     start.time.DE <- Sys.time()
-    res.tmp <- scDD(SCdat, prior_param = list(alpha = 0.1, mu0 = 0, s0 = 0.01, a0 = 0.01, b0 = 0.01), permutations = 20, testZeroes = FALSE, adjust.perms = FALSE, n.cores = 1, parallelBy = "Genes", condition = "condition")
+    res.tmp <- scDD(SCdat, prior_param = list(alpha = 0.1, mu0 = 0, s0 = 0.01, a0 = 0.01, b0 = 0.01), permutations = 0, testZeroes = FALSE, adjust.perms = FALSE, parallelBy = "Genes", condition = "condition")
     end.time.params <- Sys.time()
   }
   res <- res.tmp$Genes
