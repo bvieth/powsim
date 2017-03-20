@@ -401,7 +401,8 @@
     end.time.params <- Sys.time()
     start.time.DE <- Sys.time()
     # run DE detection
-    res.dss <- suppressWarnings(DSS::waldTest(seqData = seqData, sampleA = 0, sampleB = 1))
+    res.dss <- suppressWarnings(DSS::waldTest(seqData = seqData,
+                                              sampleA = 0, sampleB = 1))
     res.dss <- res.dss[order(res.dss$geneIndex),]
     pval <- res.dss$pval
     end.time.DE <- Sys.time()
@@ -419,7 +420,8 @@
     end.time.params <- Sys.time()
     start.time.DE <- Sys.time()
     # run DE detection
-    res.dss <- suppressWarnings(DSS::waldTest(seqData = seqData, sampleA = 0, sampleB = 1))
+    res.dss <- suppressWarnings(DSS::waldTest(seqData = seqData,
+                                              sampleA = 0, sampleB = 1))
     res.dss <- res.dss[order(res.dss$geneIndex),]
     pval <- res.dss$pval
     end.time.DE <- Sys.time()

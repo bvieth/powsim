@@ -14,6 +14,8 @@ knitr::opts_chunk$set(
 
 # powsim: Power analysis for bulk and single cell RNA-seq experiments
 
+## Installation Guide
+
 To install powsim, make sure you have installed the following R packages:
 
 ```{r, echo=T, eval=F, tidy=T}
@@ -49,19 +51,29 @@ devtools::install_github('kdkorthauer/scDD', build_vignettes = FALSE, ref = 'dev
 
 After installing the dependencies, powsim can be installed by using devtools as well.
 
-```{r, eval=F}
+```{r, echo=T, eval=F, tidy=T}
 devtools::install_github('bvieth/powsim', build_vignettes = TRUE)
 ```
 
+## User Guide
+
 For examples and tips on using the package, please see the vignette PDF 
-[here](https://github.com/bvieth/powsim/tree/master/vignettes/powsim.pdf).
+[here](https://github.com/bvieth/powsim/tree/master/vignettes/powsim.pdf) 
+or open it in R by typing
+```{r, echo=T, eval=F, tidy=T}
+browseVignettes('powsim')
+```
 
 A preprint paper describing powsim is now on [bioRxiv](https://doi.org/10.1101/117150).
 
+## Notes
+
 Please send bug reports and feature requests by opening a new issue on 
-[this page](https://github.com/bvieth/powsim/issues)
+[this page](https://github.com/bvieth/powsim/issues).
 
 Note that the error "maximal number of DLLs reached..." might occur due to the loading of many shared objects by Bioconductor packages. Restarting the R session after installing dependencies / powsim will help.
+
+## R Session Info
 
 ```{r}
 sessionInfo()

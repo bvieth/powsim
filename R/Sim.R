@@ -57,12 +57,16 @@ simulateDE <- function(n1=c(20,50,100), n2=c(30,60,120), sim.settings, ncores=NU
   if (!length(n1) == length(n2))
     stop("n1 and n2 must have the same length!")
 
-  if(sim.settings$RNAseq == "singlecell" && DEmethod %in% c("edgeRglm", "edgeRQL", "DESeq2", "baySeq", "NOISeq", "DSS", "EBSeq")) {
-    message(cat(DEmethod, " is developed for bulk RNA-seq experiments."))
+  if(!is.null(ncores) && DEmethod %in% c("edgeR", 'limma', "NOISeq", "DSS", "EBSeq", "ROTS")) {
+    message(paste0(DEmethod, " has no parallel computation option. Number of cores will be set to 1!"))
+  }
+
+  if(sim.settings$RNAseq == "singlecell" && DEmethod %in% c("edgeR", "DESeq2", "baySeq", "NOISeq", "DSS", "EBSeq")) {
+    message(paste0(DEmethod, " is developed for bulk RNA-seq experiments."))
   }
 
   if(sim.settings$RNAseq == "bulk" && DEmethod %in% c("MAST", 'BPSC')) {
-    message(cat(DEmethod, " is developed for single cell RNA-seq experiments."))
+    message(paste0(DEmethod, " is developed for single cell RNA-seq experiments."))
   }
 
   if(sim.settings$RNAseq == "bulk" && DEmethod %in% c('scde', 'scDD')) {

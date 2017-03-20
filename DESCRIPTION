@@ -4,7 +4,7 @@ Title: Power Simulations
 Description: This package provides simulation based methods for
         evaluating the statistical power to detect differential
         expression in bulk and single cell RNA-seq experiments
-Version: 1.0
+Version: 1.0.1
 Imports: methods, stats, moments, S4Vectors, AnnotationDbi, Biobase,
         BiocParallel, doParallel, parallel, snow, reshape2, dplyr,
         tidyr, data.table, ggplot2, ggthemes, ggExtra, cowplot, scales,
@@ -19,5 +19,5 @@ VignetteBuilder: knitr
 License: GPL
 NeedsCompilation: no
 Author: Beate Vieth
-Date: 2017-03-16
+Date: 2017-03-20
 Maintainer: Beate Vieth <vieth@bio.lmu.de>
