@@ -6,11 +6,11 @@ Description: This package provides simulation based methods for
         expression in bulk and single cell RNA-seq experiments
 Version: 1.0.1
 Imports: methods, stats, moments, S4Vectors, AnnotationDbi, Biobase,
-        BiocParallel, doParallel, parallel, snow, reshape2, dplyr,
-        tidyr, data.table, ggplot2, ggthemes, ggExtra, cowplot, scales,
-        fitdistrplus, NBGOF, MASS, pscl, nonnest2, cobs, msir, drc,
-        scran, scater, edgeR, limma, DESeq2, baySeq, NOISeq, EBSeq,
-        DSS, MAST, scde, scDD, ROTS, BPSC, IHW, qvalue
+        SummarizedExperiment, BiocParallel, doParallel, parallel, snow,
+        reshape2, dplyr, tidyr, data.table, ggplot2, ggthemes, ggExtra,
+        cowplot, scales, fitdistrplus, NBGOF, MASS, pscl, nonnest2,
+        cobs, msir, drc, scran, scater, edgeR, limma, DESeq2, baySeq,
+        NOISeq, EBSeq, DSS, MAST, scde, scDD, ROTS, BPSC, IHW, qvalue
 Remotes: kdkorthauer/scDD@develop, gu-mi/NBGOF, hms-dbmi/scde,
         nghiavtr/BPSC
 Depends: R (>= 3.3), gamlss.dist, splines

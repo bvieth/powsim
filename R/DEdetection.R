@@ -897,7 +897,7 @@
 
 #' @importFrom scDD scDD
 #' @importFrom edgeR cpm.DGEList
-#' @importFrom Biobase ExpressionSet
+#' @importFrom SummarizedExperiment SummarizedExperiment
 .run.scDD <- function(dat) {
   if (dat$RNAseq=="bulk") {
     stop("scDD is only for single cell RNAseq data analysis")
@@ -916,7 +916,8 @@
   exprmat <- out.cpm
   condition <- ifelse(dat$designs==-1, 1, 2)
   cell.dat <- data.frame(row.names=colnames(exprmat), condition=condition)
-  SCdat <- Biobase::ExpressionSet(assayData=exprmat, phenoData=as(cell.dat, "AnnotatedDataFrame"))
+  SCdat <- SummarizedExperiment::SummarizedExperiment(assays=list('NormCounts'=exprmat), colData=cell.dat)
+  # SCdat <- Biobase::ExpressionSet(assayData=exprmat, phenoData=as(cell.dat, "AnnotatedDataFrame"))
   end.time.params <- Sys.time()
 
   # DE testing
